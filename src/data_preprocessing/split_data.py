@@ -2,32 +2,31 @@
 Split the data into train and valid sets.
 """
 import argparse
+from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from pathlib import Path
+
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Split the data into train and valid sets.")
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Split the data into train and valid sets."
+    )
     parser.add_argument(
-        "--data_path",
-        type=str,
-        default="data/data.csv",
-        help="Path to the data file.",
+        "--data_path", type=str, default="data/data.csv", help="Path to the data file."
     )
     parser.add_argument(
         "--train_size",
         type=float,
-        default=0.8,
+        default=0.9,
         help="Proportion of the data to include in the train split.",
     )
     parser.add_argument(
-        "--random_state",
-        type=int,
-        default=42,
-        help="Random state for reproducibility.",
+        "--random_state", type=int, default=42, help="Random state for reproducibility."
     )
     args = parser.parse_args()
     return args
+
 
 def split_data(data_path: str, train_size: int = 0.8, random_state: int = 42) -> None:
     """Split the data into train and valid sets.
@@ -56,6 +55,11 @@ def split_data(data_path: str, train_size: int = 0.8, random_state: int = 42) ->
 
     print(f"DONE: Train and valid sets saved to {data_base_dir}.")
 
+
 if __name__ == "__main__":
-    args = parse_args()
-    split_data(data_path=args.data_path, train_size=args.train_size, random_state=args.random_state)
+    params = parse_args()
+    split_data(
+        data_path=params.data_path,
+        train_size=params.train_size,
+        random_state=params.random_state,
+    )
