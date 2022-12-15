@@ -1,0 +1,8 @@
+{
+    "train_path": "data/train.csv",
+    "valid_path": "data/valid.csv",
+    "model_name": "distilbert-base-uncased",
+    "output_dir": "output",
+    "num_labels": 2,
+    "target_label": "label"
+}
