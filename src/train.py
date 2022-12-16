@@ -73,6 +73,29 @@ def tokenize_text(text):
     return tokenizer(text["text"], truncation=True, is_split_into_words=True)
 
 
+def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_fn):
+    """Prepare the dataset for training.
+
+    Args:
+        dataset (dict): Dictionary containing the train and valid sets.
+        columns (list): List of columns to use.
+        label_cols (list): List of labels to use.
+        batch_size (int): Batch size to use.
+        shuffle (bool): Whether to shuffle the data.
+        collate_fn (function): Function to use for collating the data.
+
+    Returns:
+        dataset (dict): Dictionary containing the train and valid sets."""
+    tf_dataset = dataset.to_tf_dataset(
+        columns=columns,
+        label_cols=label_cols,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        collate_fn=collate_fn,
+    )
+    return tf_dataset
+
+
 def train():
     """Pipeline for training the model.
 
@@ -100,6 +123,16 @@ def train():
 
     # Load data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="tf")
+
+    # Prepare the dataset for training
+    tf_train_dataset = prepare_dataset(
+        tokenized_dataset["train"],
+        columns=["input_ids", "attention_mask", params.train_params.target_label],
+        label_cols=[params.train_params.target_label],
+        batch_size=params.hyperparameters.batch_size,
+        shuffle=True,
+        collate_fn=data_collator,
+    )
 
 if __name__ == "__main__":
     
