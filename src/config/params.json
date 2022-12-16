@@ -13,10 +13,10 @@
     "hyperparameters":
     {
         "learning_rate": 2e-5,
+        "metrics": ["accuracy"],
         "max_length": 128,
         "num_train_epochs": 3,
-        "per_device_train_batch_size": 16,
-        "per_device_eval_batch_size": 16,
+        "batch_size": 16,
         "weight_decay": 0.01,
         "logging_dir": "logs",
         "logging_steps": 10,

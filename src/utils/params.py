@@ -25,8 +25,7 @@ class Hyperparameters:
     learning_rate: float = field(metadata={"help": "Learning rate to use."})
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
     num_train_epochs: int = field(metadata={"help": "Number of training epochs."})
-    per_device_train_batch_size: int = field(metadata={"help": "Batch size for training."})
-    per_device_eval_batch_size: int = field(metadata={"help": "Batch size for evaluation."})
+    batch_size: int = field(metadata={"help": "Batch size for training."})
     weight_decay: float = field(metadata={"help": "Weight decay to use."})
     logging_dir: str = field(metadata={"help": "Directory to save logs."})
     logging_steps: int = field(metadata={"help": "Number of steps to save logs."})
@@ -37,6 +36,7 @@ class Hyperparameters:
     load_best_model_at_end: bool = field(metadata={"help": "Load the best model at the end."})
     metric_for_best_model: str = field(metadata={"help": "Metric to use for the best model."})
     greater_is_better: bool = field(metadata={"help": "Whether the metric is greater is better."})
+    metrics: List[str] = field(default_factory=list, metadata={"help": "Metrics to use."}),
 
 
 @dataclass
