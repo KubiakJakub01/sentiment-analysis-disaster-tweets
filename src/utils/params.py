@@ -22,10 +22,10 @@ class TrainParams:
 
 @dataclass
 class Hyperparameters:
+    epochs: int = field(metadata={"help": "Number of training epochs."})
     learning_rate: float = field(metadata={"help": "Learning rate to use."})
     metric: str = field(metadata={"help": "Metric to use for the best model."})
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
-    num_train_epochs: int = field(metadata={"help": "Number of training epochs."})
     batch_size: int = field(metadata={"help": "Batch size for training."})
     weight_decay: float = field(metadata={"help": "Weight decay to use."})
     logging_dir: str = field(metadata={"help": "Directory to save logs."})

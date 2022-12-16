@@ -12,10 +12,10 @@
     },
     "hyperparameters":
     {
+        "epochs": 3,
         "learning_rate": 2e-5,
         "metric": "accuracy",
         "max_length": 128,
-        "num_train_epochs": 3,
         "batch_size": 16,
         "weight_decay": 0.01,
         "logging_dir": "logs",
