@@ -11,10 +11,7 @@ from datasets import load_dataset
 from pathlib import Path
 
 # Load the DistilBERT tokenizer to process the text field:
-from transformers import (
-    DataCollatorWithPadding,
-    create_optimizer,
-)
+from transformers import DataCollatorWithPadding, create_optimizer
 
 # Import metrics
 from transformers.keras_callbacks import KerasMetricCallback, PushToHubCallback
@@ -22,8 +19,10 @@ from keras.callbacks import TensorBoard
 
 # Import modules from src
 from src.utils.params import get_params
+
 # Import utils for text cleaning
 from src.utils.text_cleaning import text_cleaning
+
 # Import model and tokenizer selector class
 from src.model.nlp_models_selector import get_model_and_tokenizer
 
@@ -107,9 +106,11 @@ def train():
     """
 
     # Load the train and valid sets
-    dataset = load_dataset_from_csv(train_path=params.train_params.train_path, 
-                                    valid_path=params.train_params.valid_path, 
-                                    augument_path=params.train_params.augument_path)
+    dataset = load_dataset_from_csv(
+        train_path=params.train_params.train_path,
+        valid_path=params.train_params.valid_path,
+        augument_path=params.train_params.augument_path,
+    )
 
     # Preprocess the data
     dataset = preprocess_data(dataset)
@@ -134,8 +135,29 @@ def train():
         collate_fn=data_collator,
     )
 
+    # Prepare the dataset for validation
+    tf_valid_dataset = prepare_dataset(
+        tokenized_dataset["validation"],
+        columns=["input_ids", "attention_mask", params.train_params.target_label],
+        label_cols=[params.train_params.target_label],
+        batch_size=params.hyperparameters.batch_size,
+        shuffle=False,
+        collate_fn=data_collator,
+    )
+
+    # Set up the optimizer
+    optimizer, schedule = create_optimizer(
+        init_lr=params.hyperparameters.learning_rate,
+        num_warmup_steps=0,
+        num_train_steps=int(
+            (len(tf_train_dataset) // params.hyperparameters.batch_size)
+            * params.hyperparameters.epochs
+        ),
+    )
+
+
 if __name__ == "__main__":
-    
+
     # Get start time
     start_time = datetime.now()
     start_time = start_time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -145,19 +167,23 @@ if __name__ == "__main__":
         # Load the parameters from the config file
         params = get_params(sys.argv[1])
     else:
-        print("""No config file provided. Specify a config file with the following format:
+        print(
+            """No config file provided. Specify a config file with the following format:
                 { "train_path": "path/to/train.csv",
                   "valid_path": "path/to/valid.csv",
                   "model_name": "distilbert-base-uncased",
                   "output_dir": "path/to/output_dir",
                   "num_labels": 2,
                   "target_label": "label",
-                  "augmented_path": "path/to/augmented.csv""")
+                  "augmented_path": "path/to/augmented.csv"""
+        )
         sys.exit(1)
 
     # Load model, and tokenizer
-    model, tokenizer = get_model_and_tokenizer(model_name=params.train_params.model_name, 
-                                               num_labels=params.train_params.num_labels)
+    model, tokenizer = get_model_and_tokenizer(
+        model_name=params.train_params.model_name,
+        num_labels=params.train_params.num_labels,
+    )
 
     # Create the output directory
     params.train_params.output_dir = f"{params.train_params.output_dir}_{start_time}"
