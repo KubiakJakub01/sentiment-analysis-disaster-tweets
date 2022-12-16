@@ -22,6 +22,11 @@ from keras.callbacks import TensorBoard
 
 # Import modules from src
 from src.utils.params import train_params
+# Import utils for text cleaning
+from src.utils.text_cleaning import text_cleaning
+# Import model and tokenizer selector class
+from src.model.nlp_models_selector import get_model_and_tokenizer
+
 
 def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) -> None:
     """Load the train and valid sets.
@@ -44,6 +49,7 @@ def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) 
         )
     return dataset
 
+
 def preprocess_data(dataset: dict) -> dict:
     """Preprocess the data.
 
@@ -54,7 +60,18 @@ def preprocess_data(dataset: dict) -> dict:
         dataset (dict): Dictionary containing cleaned the train and valid sets."""
     dataset = dataset.map(lambda examples: {"text": [text_cleaning(examples["text"])]})
     return dataset
-    
+
+
+def tokenize_text(text):
+    """Tokenize the data.
+
+    Args:
+        text (str): Text to tokenize.
+
+    Returns:
+        tokenized_data (dict): Dictionary containing the tokenized data."""
+    return tokenizer(text["text"], truncation=True, is_split_into_words=True)
+
 
 def train(params):
     """Pipeline for training the model.
@@ -72,7 +89,14 @@ def train(params):
                                     augument_path=params.augument_path)
 
     # Preprocess the data
+    dataset = preprocess_data(dataset)
 
+    # Tokenize the data
+    tokenized_dataset = dataset.map(
+        tokenize_text,
+        batched=True,
+        remove_columns=["id", "keyword", "location", "text"],
+    )
 
 
 
@@ -82,6 +106,7 @@ if __name__ == "__main__":
     start_time = datetime.now()
     start_time = start_time.strftime("%Y-%m-%d_%H-%M-%S")
 
+    # Load parameters from config json file
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # Load the parameters from the config file
         with open(sys.argv[1]) as f:
@@ -96,6 +121,10 @@ if __name__ == "__main__":
                   "target_label": "label",
                   "augmented_path": "path/to/augmented.csv""")
         sys.exit(1)
+
+    # Load model, and tokenizer
+    model, tokenizer = get_model_and_tokenizer(model_name=params_.model_name, 
+                                               num_labels=params_.num_labels)
 
     # Create the output directory
     params_.output_dir = f"{params_.output_dir}_{start_time}"
