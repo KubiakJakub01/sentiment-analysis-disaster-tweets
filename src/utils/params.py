@@ -4,8 +4,8 @@ Module for handling parameters
 
 import json
 import os
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass, field 
+from typing import Optional, List
 
 @dataclass
 class TrainParams:
@@ -15,26 +15,28 @@ class TrainParams:
     output_dir: str = field(metadata={"help": "Output directory for the model."})
     num_labels: int = field(metadata={"help": "Number of labels to use."})
     target_label: str = field(metadata={"help": "Target label to use."})
+    text_column: str = field(metadata={"help": "Column containing the text to use."})
+    remove_columns: Optional[List[str]] = field(default_factory=list, metadata={"help": "Columns to remove from the dataset."})
     augmented_path: Optional[str] = field(default=None, metadata={"help": "Path to the augmented set."})
 
 
 @dataclass
 class Hyperparameters:
-    learning_rate: float
-    max_length: int
-    num_train_epochs: int
-    per_device_train_batch_size: int
-    per_device_eval_batch_size: int
-    weight_decay: float
-    logging_dir: str
-    logging_steps: int
-    save_steps: int
-    save_total_limit: int
-    evaluation_strategy: str
-    eval_steps: int
-    load_best_model_at_end: bool
-    metric_for_best_model: str
-    greater_is_better: bool
+    learning_rate: float = field(metadata={"help": "Learning rate to use."})
+    max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
+    num_train_epochs: int = field(metadata={"help": "Number of training epochs."})
+    per_device_train_batch_size: int = field(metadata={"help": "Batch size for training."})
+    per_device_eval_batch_size: int = field(metadata={"help": "Batch size for evaluation."})
+    weight_decay: float = field(metadata={"help": "Weight decay to use."})
+    logging_dir: str = field(metadata={"help": "Directory to save logs."})
+    logging_steps: int = field(metadata={"help": "Number of steps to save logs."})
+    save_steps: int = field(metadata={"help": "Number of steps to save the model."})
+    save_total_limit: int = field(metadata={"help": "Number of total checkpoints to save."})
+    evaluation_strategy: str = field(metadata={"help": "Evaluation strategy to use."})
+    eval_steps: int = field(metadata={"help": "Number of steps to evaluate the model."})
+    load_best_model_at_end: bool = field(metadata={"help": "Load the best model at the end."})
+    metric_for_best_model: str = field(metadata={"help": "Metric to use for the best model."})
+    greater_is_better: bool = field(metadata={"help": "Whether the metric is greater is better."})
 
 
 @dataclass
@@ -54,7 +56,15 @@ def get_params(json_file_path) -> Params:
     """
     if os.path.exists(json_file_path):
         with open(json_file_path, "r") as f:
-            params = Params(**json.load(f))
+            json_loader = json.load(f)
+        train_params = TrainParams(**json_loader["train_params"])
+        hyperparameters = Hyperparameters(**json_loader["hyperparameters"])
+        params = Params(train_params=train_params, hyperparameters=hyperparameters)
     else:
         raise FileNotFoundError(f"File {json_file_path} not found.")
     return params
+
+if __name__ == "__main__":
+    params = get_params("src/config/params.json")
+    print(params.train_params.train_path)
+    print(params.hyperparameters.learning_rate)
