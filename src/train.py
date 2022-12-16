@@ -26,6 +26,8 @@ from src.utils.text_cleaning import text_cleaning
 # Import model and tokenizer selector class
 from src.model.nlp_models_selector import get_model_and_tokenizer
 
+# Import metrics
+from src.utils.nlp_metric import Metric
 
 def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) -> None:
     """Load the train and valid sets.
@@ -148,12 +150,15 @@ def train():
     # Set up the optimizer
     optimizer, schedule = create_optimizer(
         init_lr=params.hyperparameters.learning_rate,
-        num_warmup_steps=0,
+        num_warmup_steps=params.hyperparameters.warmup_steps,
         num_train_steps=int(
             (len(tf_train_dataset) // params.hyperparameters.batch_size)
             * params.hyperparameters.epochs
         ),
     )
+
+    # Set up the metric
+    metric = Metric(params.hyperparameters.metric)
 
 
 if __name__ == "__main__":
