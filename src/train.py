@@ -97,6 +97,35 @@ def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_f
     return tf_dataset
 
 
+def prepare_callbacks(hiperparameters, tokenizer, metric, valid_dataset, target_label, output_dir):
+    """Prepare the callbacks for training.
+
+    Args:
+        hiperparameters (dict): Dictionary containing the hiperparameters.
+        tokenizer (transformers.tokenization_utils_base.PreTrainedTokenizerBase):
+            Tokenizer to use for encoding the data.
+        metric (transformers.metric.Metric): Metric to use for training.
+        valid_dataset (tf.data.Dataset): Dataset to use for validation.
+
+    Returns:
+        callbacks (list): List containing the callbacks for training."""
+    callbacks = [
+        KerasMetricCallback(
+            metric_fn=metric.compute_metrics,
+            eval_dataset=valid_dataset,
+            batch_size=hiperparameters.batch_size,
+            label_cols=target_label,
+        ),
+        PushToHubCallback(
+            output_dir=output_dir,
+            tokenizer=tokenizer,
+            save_strategy=hiperparameters.save_strategy,
+        ),
+        TensorBoard(log_dir=hiperparameters.logging_dir),
+    ]
+    return callbacks
+
+
 def train():
     """Pipeline for training the model.
 
@@ -160,6 +189,18 @@ def train():
     # Set up the metric
     metric = Metric(params.hyperparameters.metric)
 
+    # Compile the model
+    model.compile(optimizer=optimizer)
+
+        # Set up the callbacks
+    callbacks = prepare_callbacks(
+        hiperparameters=params.hyperparameters,
+        tokenizer=tokenizer,
+        metric=metric,
+        valid_dataset=tf_valid_dataset,
+        target_label=[params.train_params.target_label],
+        output_dir=params.train_params.output_dir,
+    )
 
 if __name__ == "__main__":
 
