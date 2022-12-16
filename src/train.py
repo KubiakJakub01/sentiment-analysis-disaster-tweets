@@ -8,6 +8,7 @@ import sys
 import json
 from datetime import datetime
 from datasets import load_dataset
+from pathlib import Path
 
 # Load the DistilBERT tokenizer to process the text field:
 from transformers import (
@@ -43,6 +44,18 @@ def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) 
         )
     return dataset
 
+def preprocess_data(dataset: dict) -> dict:
+    """Preprocess the data.
+
+    Args:
+        dataset (dict): Dictionary containing the train and valid sets.
+
+    Returns:
+        dataset (dict): Dictionary containing cleaned the train and valid sets."""
+    dataset = dataset.map(lambda examples: {"text": [text_cleaning(examples["text"])]})
+    return dataset
+    
+
 def train(params):
     """Pipeline for training the model.
 
@@ -52,11 +65,23 @@ def train(params):
     Returns:
         Saves the trained model to the output directory.
     """
-    pass
+
+    # Load the train and valid sets
+    dataset = load_dataset_from_csv(train_path=params.train_path, 
+                                    valid_path=params.valid_path, 
+                                    augument_path=params.augument_path)
+
+    # Preprocess the data
+
+
 
 
 if __name__ == "__main__":
     
+    # Get start time
+    start_time = datetime.now()
+    start_time = start_time.strftime("%Y-%m-%d_%H-%M-%S")
+
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # Load the parameters from the config file
         with open(sys.argv[1]) as f:
@@ -71,7 +96,10 @@ if __name__ == "__main__":
                   "target_label": "label",
                   "augmented_path": "path/to/augmented.csv""")
         sys.exit(1)
-    print(params_)
+
+    # Create the output directory
+    params_.output_dir = f"{params_.output_dir}_{start_time}"
+    os.makedirs(params_.output_dir, exist_ok=True)
 
     # Train the model
     train(params_)
