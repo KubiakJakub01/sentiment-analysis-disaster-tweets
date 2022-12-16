@@ -23,6 +23,7 @@ class TrainParams:
 @dataclass
 class Hyperparameters:
     learning_rate: float = field(metadata={"help": "Learning rate to use."})
+    metric: str = field(metadata={"help": "Metric to use for the best model."})
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
     num_train_epochs: int = field(metadata={"help": "Number of training epochs."})
     batch_size: int = field(metadata={"help": "Batch size for training."})
@@ -34,9 +35,7 @@ class Hyperparameters:
     evaluation_strategy: str = field(metadata={"help": "Evaluation strategy to use."})
     eval_steps: int = field(metadata={"help": "Number of steps to evaluate the model."})
     load_best_model_at_end: bool = field(metadata={"help": "Load the best model at the end."})
-    metric_for_best_model: str = field(metadata={"help": "Metric to use for the best model."})
     greater_is_better: bool = field(metadata={"help": "Whether the metric is greater is better."})
-    metrics: List[str] = field(default_factory=list, metadata={"help": "Metrics to use."}),
 
 
 @dataclass
