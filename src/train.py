@@ -21,7 +21,7 @@ from transformers.keras_callbacks import KerasMetricCallback, PushToHubCallback
 from keras.callbacks import TensorBoard
 
 # Import modules from src
-from src.utils.params import train_params
+from src.utils.params import get_params
 # Import utils for text cleaning
 from src.utils.text_cleaning import text_cleaning
 # Import model and tokenizer selector class
@@ -73,7 +73,7 @@ def tokenize_text(text):
     return tokenizer(text["text"], truncation=True, is_split_into_words=True)
 
 
-def train(params):
+def train():
     """Pipeline for training the model.
 
     Args:
@@ -84,9 +84,9 @@ def train(params):
     """
 
     # Load the train and valid sets
-    dataset = load_dataset_from_csv(train_path=params.train_path, 
-                                    valid_path=params.valid_path, 
-                                    augument_path=params.augument_path)
+    dataset = load_dataset_from_csv(train_path=params.train_params.train_path, 
+                                    valid_path=params.train_params.valid_path, 
+                                    augument_path=params.train_params.augument_path)
 
     # Preprocess the data
     dataset = preprocess_data(dataset)
@@ -98,7 +98,8 @@ def train(params):
         remove_columns=["id", "keyword", "location", "text"],
     )
 
-
+    # Load data collator
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="tf")
 
 if __name__ == "__main__":
     
@@ -109,8 +110,7 @@ if __name__ == "__main__":
     # Load parameters from config json file
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # Load the parameters from the config file
-        with open(sys.argv[1]) as f:
-            params_ = train_params(**json.load(f))
+        params = get_params(sys.argv[1])
     else:
         print("""No config file provided. Specify a config file with the following format:
                 { "train_path": "path/to/train.csv",
@@ -123,12 +123,12 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Load model, and tokenizer
-    model, tokenizer = get_model_and_tokenizer(model_name=params_.model_name, 
-                                               num_labels=params_.num_labels)
+    model, tokenizer = get_model_and_tokenizer(model_name=params.train_params.model_name, 
+                                               num_labels=params.train_params.num_labels)
 
     # Create the output directory
-    params_.output_dir = f"{params_.output_dir}_{start_time}"
-    os.makedirs(params_.output_dir, exist_ok=True)
+    params.train_params.output_dir = f"{params.train_params.output_dir}_{start_time}"
+    os.makedirs(params.train_params.output_dir, exist_ok=True)
 
     # Train the model
-    train(params_)
+    train(params)
