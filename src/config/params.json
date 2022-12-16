@@ -1,8 +1,31 @@
 {
-    "train_path": "data/train.csv",
-    "valid_path": "data/valid.csv",
-    "model_name": "distilbert-base-uncased",
-    "output_dir": "output",
-    "num_labels": 2,
-    "target_label": "label"
+    "train_params":
+    {
+        "train_path": "data/train.csv",
+        "valid_path": "data/valid.csv",
+        "model_name": "distilbert-base-uncased",
+        "output_dir": "output",
+        "num_labels": 2,
+        "target_label": "label",
+        "text_column": "text",
+        "remove_columns": ["id", "keyword", "location", "text"]
+    },
+    "hyperparameters":
+    {
+        "learning_rate": 2e-5,
+        "max_length": 128,
+        "num_train_epochs": 3,
+        "per_device_train_batch_size": 16,
+        "per_device_eval_batch_size": 16,
+        "weight_decay": 0.01,
+        "logging_dir": "logs",
+        "logging_steps": 10,
+        "save_steps": 10,
+        "save_total_limit": 2,
+        "evaluation_strategy": "steps",
+        "eval_steps": 10,
+        "load_best_model_at_end": true,
+        "metric_for_best_model": "accuracy",
+        "greater_is_better": true
+    }
 }
