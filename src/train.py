@@ -29,6 +29,7 @@ from src.model.nlp_models_selector import get_model_and_tokenizer
 # Import metrics
 from src.utils.nlp_metric import Metric
 
+
 def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) -> None:
     """Load the train and valid sets.
 
@@ -97,7 +98,9 @@ def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_f
     return tf_dataset
 
 
-def prepare_callbacks(hiperparameters, tokenizer, metric, valid_dataset, target_label, output_dir):
+def prepare_callbacks(
+    hiperparameters, tokenizer, metric, valid_dataset, target_label, output_dir
+):
     """Prepare the callbacks for training.
 
     Args:
@@ -192,7 +195,7 @@ def train():
     # Compile the model
     model.compile(optimizer=optimizer)
 
-        # Set up the callbacks
+    # Set up the callbacks
     callbacks = prepare_callbacks(
         hiperparameters=params.hyperparameters,
         tokenizer=tokenizer,
@@ -201,6 +204,15 @@ def train():
         target_label=[params.train_params.target_label],
         output_dir=params.train_params.output_dir,
     )
+
+    # Fit the model
+    model.fit(
+        tf_train_dataset,
+        validation_data=tf_valid_dataset,
+        epochs=params.hyperparameters.num_train_epochs,
+        callbacks=callbacks,
+    )
+
 
 if __name__ == "__main__":
 
