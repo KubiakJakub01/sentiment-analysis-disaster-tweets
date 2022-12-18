@@ -1,0 +1,10 @@
+version: '1.0'
+
+services:
+  app:
+    build: .
+    container_name: sentiment-analysis-nlp
+    ports:
+      - 8080:80
+    volumes:
+      - .:/app
