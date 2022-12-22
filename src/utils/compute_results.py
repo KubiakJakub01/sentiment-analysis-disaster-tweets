@@ -79,3 +79,12 @@ def get_results(preds, labels, metrics):
     return results
 
 
+def save_results(results, save_predictions_path):
+    """Save the results in a json file.
+
+    Args:
+        results (dict): Dictionary with the results.
+        save_predictions_path (str): Path to save the results."""
+    if save_predictions_path:
+        with open(save_predictions_path / "metrics.txt", "w") as f:
+            f.write(str(results))
