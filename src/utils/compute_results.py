@@ -34,4 +34,12 @@ def get_params():
         default=["accuracy", "precision", "recall", "f1"],
     )
     return parser.parse_args()
-    
+
+
+def read_predictions(path_to_predictions):
+    """Read predictions from json file."""
+    with open(path_to_predictions, "r") as f:
+        preds = json.load(f)
+    return preds
+
+
