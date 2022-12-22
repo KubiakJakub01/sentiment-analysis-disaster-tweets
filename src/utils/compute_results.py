@@ -60,3 +60,22 @@ def read_labels(path_to_labels):
     df = pd.read_csv(path_to_labels)
     labels = df["labels"].tolist()
     return labels
+
+
+def get_results(preds, labels, metrics):
+    """Get results for the model.
+
+    Args:
+        preds (list): List of predictions.
+        labels (list): List of labels.
+        metrics (list): List of metrics to use.
+
+    Returns:
+        results (dict): Dictionary with the results."""
+    results = {}
+    preds_labels = [pred["labels"] for pred in preds]
+    for metric in metrics:
+        results[metric.metric_name] = metric.compute(preds_labels, labels)
+    return results
+
+
