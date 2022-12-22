@@ -1,33 +1,31 @@
 """
 Main training script for the project.
 """
+#pylint: disable=too-many-arguments
+#pylint: disable=redefined-outer-name
+#pylint: disable=unused-variable
 
 # Import basic libraries
 import os
 import sys
-import json
 from datetime import datetime
-from datasets import load_dataset
-from pathlib import Path
 
+# Import huggingface libraries
+from datasets import load_dataset
+from keras.callbacks import TensorBoard
 # Load the DistilBERT tokenizer to process the text field:
 from transformers import DataCollatorWithPadding, create_optimizer
-
 # Import metrics
 from transformers.keras_callbacks import KerasMetricCallback, PushToHubCallback
-from keras.callbacks import TensorBoard
-
-# Import modules from src
-from src.utils.params import get_params
-
-# Import utils for text cleaning
-from src.utils.text_cleaning import text_cleaning
 
 # Import model and tokenizer selector class
 from src.model.nlp_models_selector import get_model_and_tokenizer
-
 # Import metrics
 from src.utils.nlp_metric import Metric
+# Import modules from src
+from src.utils.params import get_params
+# Import utils for text cleaning
+from src.utils.text_cleaning import text_cleaning
 
 
 def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) -> None:
@@ -134,7 +132,7 @@ def train():
 
     Args:
         params (dict): Dictionary of parameters.
-    
+
     Returns:
         Saves the trained model to the output directory.
     """
@@ -248,4 +246,4 @@ if __name__ == "__main__":
     os.makedirs(params.train_params.output_dir, exist_ok=True)
 
     # Train the model
-    train(params)
+    train()

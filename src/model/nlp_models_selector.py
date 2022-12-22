@@ -5,7 +5,7 @@ within this class.
 """
 #pylint: disable=import-outside-topleve
 
-def get_model_and_tokenizer(model_name: str, num_label: int) -> object:
+def get_model_and_tokenizer(model_name: str, num_labels: int) -> object:
     """Selects the model type based on the model_name and num_label.
 
     Args:
@@ -18,19 +18,17 @@ def get_model_and_tokenizer(model_name: str, num_label: int) -> object:
             Tokenizer to use for encoding the data.
     """
     if "distilbert" in model_name:
-        from transformers import (
-            TFDistilBertModel,
-            DistilBertTokenizer,
-            DistilBertConfig,
-        )
-        config = DistilBertConfig(num_labels=num_label)
+        from transformers import (DistilBertConfig, DistilBertTokenizer,
+                                  TFDistilBertModel)
+        config = DistilBertConfig(num_labels=num_labels)
         model = TFDistilBertModel.from_pretrained(model_name, config=config)
         tokenizer = DistilBertTokenizer.from_pretrained(model_name)
 
     elif "TFAutoModel" in model_name:
-        from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+        from transformers import (AutoTokenizer,
+                                  TFAutoModelForSequenceClassification)
         model = TFAutoModelForSequenceClassification.from_pretrained(
-            model_name, num_labels=num_label
+            model_name, num_labels=num_labels
         )
         tokenizer = AutoTokenizer.from_pretrained(model_name)
 
