@@ -37,9 +37,26 @@ def get_params():
 
 
 def read_predictions(path_to_predictions):
-    """Read predictions from json file."""
+    """Read predictions from json file.
+    
+    Args:
+        path_to_predictions (str): Path to the predictions.
+    
+    Returns:
+        preds (dict): Dictionary containing the predictions."""
     with open(path_to_predictions, "r") as f:
         preds = json.load(f)
     return preds
 
 
+def read_labels(path_to_labels):
+    """Read labels from a csv file.
+    
+    Args:
+        path_to_labels (str): Path to the labels.
+        
+    Returns:
+        labels (list): List containing the labels."""
+    df = pd.read_csv(path_to_labels)
+    labels = df["labels"].tolist()
+    return labels
