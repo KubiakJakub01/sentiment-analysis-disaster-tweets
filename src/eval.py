@@ -70,3 +70,19 @@ if __name__ == "__main__":
     START_TIME = datetime.now()
     START_TIME = START_TIME.strftime("%Y-%m-%d_%H-%M-%S")
     SAVE_PREDICTIONS_PATH = Path(params.save_predictions_path) / MODEL_NAME / START_TIME
+
+    print(f"Save predictions path: {SAVE_PREDICTIONS_PATH}")
+
+    # Load model and tokenizer
+    model, tokenizer = get_model_and_tokenizer(MODEL_NAME, NUM_LABELS)
+
+    # Load test data
+    test_dataset = load_dataset("csv", data_files={"test": params.path_to_test_data})
+    test_dataset = test_dataset["test"]
+
+    # Load metric
+    print(f"Metrices: {params.metrics}")
+    # Load metrics
+    metrics = [Metric(metric) for metric in params.metrics]
+
+
