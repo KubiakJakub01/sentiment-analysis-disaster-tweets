@@ -109,6 +109,18 @@ def evaluate():
      # Get predictions
     preds = get_prdiction(model, tokenizer, test_dataset["text"])
 
+    # Save predictions
+    save_predictions(preds, SAVE_PREDICTIONS_PATH)
+
+    # Compute metrics
+    results = get_results(preds, test_dataset["labels"], metrics)
+
+    # Print metric results
+    print(results)
+
+    # Save metric results
+    save_results(results, SAVE_PREDICTIONS_PATH)
+
 
 if __name__ == "__main__":
     
@@ -134,7 +146,7 @@ if __name__ == "__main__":
 
     # Load metric
     print(f"Metrices: {params.metrics}")
-    # Load metrics
     metrics = [Metric(metric) for metric in params.metrics]
 
-
+    # Evaluate the model
+    evaluate()
