@@ -56,3 +56,17 @@ def get_params():
         default=["accuracy", "precision", "recall", "f1"],
     )
     return parser.parse_args()
+
+
+if __name__ == "__main__":
+    
+    # Get parameters
+    params = get_params()
+
+    # Define constant variables
+    MODEL_PATH = Path(params.model_path)
+    MODEL_NAME = MODEL_PATH.name
+    NUM_LABELS = params.num_labels
+    START_TIME = datetime.now()
+    START_TIME = START_TIME.strftime("%Y-%m-%d_%H-%M-%S")
+    SAVE_PREDICTIONS_PATH = Path(params.save_predictions_path) / MODEL_NAME / START_TIME
