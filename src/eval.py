@@ -62,7 +62,7 @@ def map_label_to_integers(label):
     """Map labels to integers."""
     label = 1 if "1" in label else 0
     return label
-    
+
 
 def get_prdiction(model, tokenizer, text):
     """Get predictions for the model.
@@ -86,6 +86,21 @@ def get_prdiction(model, tokenizer, text):
     ]
 
     return preds
+
+
+def save_predictions(preds, save_predictions_path):
+    """Save predictions to json file.
+
+    Args:
+        preds (dict): Dictionary with the predictions.
+        save_predictions_path (str): Path to save the predictions.
+
+    Returns:
+        Create a file with the predictions."""
+    if save_predictions_path:
+        save_predictions_path.mkdir(parents=True, exist_ok=True)
+        with open(save_predictions_path / "predictions.json", "w", encoding="utf-8") as json_file:
+            json.dump(preds, json_file)
 
 
 def evaluate():
