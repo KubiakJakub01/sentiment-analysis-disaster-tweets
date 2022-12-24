@@ -95,3 +95,28 @@ def augument_data(df, aug, num_threads):
     df = df.rename(columns={"text": "original_text"})
     df = df.rename(columns={"augument_text": "text"})
     return df
+
+
+if __name__ == "__main__":
+
+    # Get the parameters
+    args = get_params()
+
+    print(f"Loading data from: {args.path_to_data}")
+    # Read the data
+    df = pd.read_csv(args.path_to_data)
+
+    # Augument the data
+    print(
+        f"Augumenting data using: {args.augumentation_type} and model: {args.model_name}"
+    )
+    aug = nlpaw.ContextualWordEmbsAug(
+        model_path=args.model_name, action=args.augumentation_type
+    )
+
+    print("Augumenting data...")
+    df = augument_data(df, aug, 4)
+
+    # Save the data
+    print(f"Saving data to: {args.path_to_save_data}")
+    df.to_csv(args.path_to_save_data, index=False)
