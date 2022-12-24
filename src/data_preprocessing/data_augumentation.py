@@ -45,3 +45,53 @@ def get_params():
         help="Augumentation type to use.",
     )
     return parser.parse_args()
+
+
+def augment_sentence(sentence, aug, num_threads):
+    """Augment a sentence.
+
+    Args:
+        sentence (str): Sentence to augment.
+        aug (nlpaug.augmenter.word.WordAugmenter): Augmenter to use.
+        num_threads (int): Number of threads to use.
+
+    Returns:
+        augmented_sentence (str): Augmented sentence."""
+    augmented_sentence = aug.augment(sentence, n=num_threads)
+    return augmented_sentence
+
+
+def augument_text(df, aug, num_threads):
+    """Augment text.
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the text to augment.
+        aug (nlpaug.augmenter.word.WordAugmenter): Augmenter to use.
+        num_threads (int): Number of threads to use.
+
+    Returns:
+        df (pd.DataFrame): Dataframe containing the augmented text."""
+    # Augument text with progress bar
+    df["augument_text"] = tqdm.tqdm(
+        df["text"].apply(
+            lambda x: augment_sentence(x, aug, num_threads)
+        )
+    )
+    return df
+
+
+def augument_data(df, aug, num_threads):
+    """Augment data.
+
+    Args:
+        df (pd.DataFrame): Dataframe containing the text to augment.
+        aug (nlpaug.augmenter.word.WordAugmenter): Augmenter to use.
+        num_threads (int): Number of threads to use.
+
+    Returns:
+        df (pd.DataFrame): Dataframe containing the augmented text."""
+    df = augument_text(df, aug, num_threads)
+    df = df[["text", "labels", "augument_text"]]
+    df = df.rename(columns={"text": "original_text"})
+    df = df.rename(columns={"augument_text": "text"})
+    return df
