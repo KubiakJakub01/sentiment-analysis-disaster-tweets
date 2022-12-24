@@ -4,8 +4,9 @@ Module for handling parameters
 
 import json
 import os
-from dataclasses import dataclass, field 
-from typing import Optional, List
+from dataclasses import dataclass, field
+from typing import List, Optional
+
 
 @dataclass
 class TrainParams:
@@ -16,6 +17,7 @@ class TrainParams:
     num_labels: int = field(metadata={"help": "Number of labels to use."})
     target_label: str = field(metadata={"help": "Target label to use."})
     text_column: str = field(metadata={"help": "Column containing the text to use."})
+    add_layers: bool = field(default=False, metadata={"help": "If add input and binary output layers."})
     remove_columns: Optional[List[str]] = field(default_factory=list, metadata={"help": "Columns to remove from the dataset."})
     augmented_path: Optional[str] = field(default=None, metadata={"help": "Path to the augmented set."})
 
@@ -24,6 +26,8 @@ class TrainParams:
 class Hyperparameters:
     epochs: int = field(metadata={"help": "Number of training epochs."})
     learning_rate: float = field(metadata={"help": "Learning rate to use."})
+    dropout: float = field(metadata={"help": "Dropout to use."})
+    attention_dropout: float = field(metadata={"help": "Attention dropout to use."})
     metric: str = field(metadata={"help": "Metric to use for the best model."})
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
     batch_size: int = field(metadata={"help": "Batch size for training."})

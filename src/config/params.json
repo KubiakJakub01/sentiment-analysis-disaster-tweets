@@ -4,6 +4,7 @@
         "train_path": "data/train.csv",
         "valid_path": "data/valid.csv",
         "model_name": "distilbert-base-uncased",
+        "add_layers": true,
         "output_dir": "output",
         "num_labels": 2,
         "target_label": "label",
@@ -14,6 +15,8 @@
     {
         "epochs": 3,
         "learning_rate": 2e-5,
+        "dopout": 0.2,
+        "attention_dropout": 0.2,
         "metric": "accuracy",
         "max_length": 128,
         "batch_size": 16,

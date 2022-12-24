@@ -244,6 +244,10 @@ if __name__ == "__main__":
     model, tokenizer = get_model_and_tokenizer(
         model_name=params.train_params.model_name,
         num_labels=params.train_params.num_labels,
+        add_layers=params.hyperparameters.add_layers,
+        droput=params.hyperparameters.dropout,
+        att_droput=params.hyperparameters.attention_dropout,
+        max_length=params.hyperparameters.max_length,
     )
 
     # Create the output directory
