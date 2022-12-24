@@ -18,11 +18,11 @@ def get_model_and_tokenizer(model_name: str, num_labels: int) -> object:
             Tokenizer to use for encoding the data.
     """
     if "distilbert" in model_name:
-        from transformers import (DistilBertConfig, DistilBertTokenizer,
+        from transformers import (DistilBertConfig, DistilBertTokenizerFast,
                                   TFDistilBertModel)
         config = DistilBertConfig(num_labels=num_labels)
         model = TFDistilBertModel.from_pretrained(model_name, config=config)
-        tokenizer = DistilBertTokenizer.from_pretrained(model_name)
+        tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
     elif "TFAutoModel" in model_name:
         from transformers import (AutoTokenizer,
