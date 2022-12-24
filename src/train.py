@@ -70,7 +70,12 @@ def tokenize_text(text):
 
     Returns:
         tokenized_data (dict): Dictionary containing the tokenized data."""
-    return tokenizer(text["text"], truncation=True, is_split_into_words=True)
+    return tokenizer(text["text"], 
+                    truncation=True, 
+                    is_split_into_words=True,
+                    padding="longest",
+                    return_attention_mask=True,
+                    return_token_type_ids=False)
 
 
 def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_fn):
