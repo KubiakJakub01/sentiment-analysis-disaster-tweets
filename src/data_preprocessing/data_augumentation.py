@@ -12,7 +12,7 @@ import tqdm
 
 def get_params():
     """Get parameters from command line.
-    
+
     Returns:
         args (argparse.Namespace): Arguments from command line."""
     parser = argparse.ArgumentParser()
@@ -44,6 +44,25 @@ def get_params():
         default="substitute",
         help="Augumentation type to use.",
     )
+    parser.add_argument(
+        "--num_threads",
+        "-n",
+        type=int,
+        default=4,
+        help="Number of threads to use.",
+    )
+    parser.add_argument(
+        "--aug_min",
+        type=int,
+        default=1,
+        help="Minimum number of words to augment.",
+    )
+    parser.add_argument(
+        "--aug_p",
+        type=float,
+        default=0.3,
+        help="Probability of words to augment.",
+    )
     return parser.parse_args()
 
 
@@ -73,9 +92,7 @@ def augument_text(df, aug, num_threads):
         df (pd.DataFrame): Dataframe containing the augmented text."""
     # Augument text with progress bar
     df["augument_text"] = tqdm.tqdm(
-        df["text"].apply(
-            lambda x: augment_sentence(x, aug, num_threads)
-        )
+        df["text"].apply(lambda x: augment_sentence(x, aug, num_threads))
     )
     return df
 
@@ -111,7 +128,10 @@ if __name__ == "__main__":
         f"Augumenting data using: {args.augumentation_type} and model: {args.model_name}"
     )
     aug = nlpaw.ContextualWordEmbsAug(
-        model_path=args.model_name, action=args.augumentation_type
+        model_path=args.model_name,
+        action=args.augumentation_type,
+        aug_min=args.aug_min,
+        aug_p=args.aug_p,
     )
 
     print("Augumenting data...")

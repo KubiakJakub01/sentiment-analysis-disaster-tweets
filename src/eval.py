@@ -20,7 +20,7 @@ from src.utils.nlp_metric import Metric
 
 def get_params():
     """Get parameters from command line.
-    
+
     Returns:
         args (argparse.Namespace): Arguments from command line."""
     parser = argparse.ArgumentParser()
@@ -99,14 +99,16 @@ def save_predictions(preds, save_predictions_path):
         Create a file with the predictions."""
     if save_predictions_path:
         save_predictions_path.mkdir(parents=True, exist_ok=True)
-        with open(save_predictions_path / "predictions.json", "w", encoding="utf-8") as json_file:
+        with open(
+            save_predictions_path / "predictions.json", "w", encoding="utf-8"
+        ) as json_file:
             json.dump(preds, json_file)
 
 
 def evaluate():
     """Evaluate the model."""
 
-     # Get predictions
+    # Get predictions
     preds = get_prdiction(model, tokenizer, test_dataset["text"])
 
     # Save predictions
@@ -123,7 +125,7 @@ def evaluate():
 
 
 if __name__ == "__main__":
-    
+
     # Get parameters
     params = get_params()
 
