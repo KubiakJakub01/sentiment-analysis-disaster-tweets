@@ -59,3 +59,22 @@ def get_model_and_tokenizer(
     else:
         raise ValueError("Model not supported.")
     return model, tokenizer
+
+
+# Define the model and the optimizer
+def model_fn(features, labels, mode, params):
+    import tensorflow as tf
+    from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+
+    # Create the model and tokenizer
+    model_type = params["model_type"]
+    model = TFAutoModelForSequenceClassification.from_pretrained(model_type)
+    tokenizer = AutoTokenizer.from_pretrained(model_type)
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate=params["learning_rate"])
+
+    # Compile the model
+    model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+
+    # Return the model
+    return model
