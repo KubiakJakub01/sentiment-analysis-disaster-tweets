@@ -5,7 +5,8 @@ within this class.
 """
 # pylint: disable=import-outside-topleve
 
-from src.model.utils.build_custom_transformer import add_input_and_binary_output_layers
+from src.model.utils.build_custom_transformer import \
+    add_input_and_binary_output_layers
 
 
 def get_model_and_tokenizer(
@@ -30,11 +31,8 @@ def get_model_and_tokenizer(
             Tokenizer to use for encoding the data.
     """
     if "distilbert" in model_name:
-        from transformers import (
-            DistilBertConfig,
-            DistilBertTokenizerFast,
-            TFDistilBertModel,
-        )
+        from transformers import (DistilBertConfig, DistilBertTokenizerFast,
+                                  TFDistilBertModel)
 
         config = DistilBertConfig(
             num_labels=num_labels,
@@ -49,7 +47,8 @@ def get_model_and_tokenizer(
             model = add_input_and_binary_output_layers(model, max_length)
 
     elif "TFAutoModel" in model_name:
-        from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+        from transformers import (AutoTokenizer,
+                                  TFAutoModelForSequenceClassification)
 
         model = TFAutoModelForSequenceClassification.from_pretrained(
             model_name, num_labels=num_labels
@@ -64,7 +63,8 @@ def get_model_and_tokenizer(
 # Define the model and the optimizer
 def model_fn(features, labels, mode, params):
     import tensorflow as tf
-    from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
+    from transformers import (AutoTokenizer,
+                              TFAutoModelForSequenceClassification)
 
     # Create the model and tokenizer
     model_type = params["model_type"]
