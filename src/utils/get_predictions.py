@@ -43,7 +43,8 @@ def get_params():
     )
     parser.add_argument(
         "--save_predictions_path", 
-        "-s", type=str, 
+        "-s", 
+        type=str, 
         help="Path to save the predictions."
     )
     return parser.parse_args()
@@ -54,7 +55,7 @@ def map_label_to_integers(label):
     return label
     
 
-def get_prdiction(model, tokenizer, id, text):
+def get_prdiction(model, tokenizer, id_list, text_list):
     """Get predictions for the model.
 
     Args:
@@ -66,11 +67,13 @@ def get_prdiction(model, tokenizer, id, text):
         preds (dict): Dictionary with the predictions."""
     preds = []
     clasificator = pipeline(task="sentiment-analysis", model=model, tokenizer=tokenizer)
-    for pred in tqdm(clasificator(text, batch_size=8), 
+    for pred in tqdm(clasificator(text_list),
+                    total=len(text_list), 
                      desc="Predictions"):
         preds.append( 
             {
-                "id": pred["id"],
+                "id": id_list,
+                "score": pred["score"],
                 "labels": map_label_to_integers(pred["label"]),
             })
 
@@ -86,9 +89,8 @@ def save_predictions(preds, save_predictions_path):
 
     Returns:
         Create a file with the predictions."""
-    # Save predictions to csv file with the following columns:
-    # id, labels
-    df = pd.DataFrame(preds)
+    # Save id and labels to csv file
+    df = pd.DataFrame(preds[["id", "labels"]])
     df.to_csv(save_predictions_path, index=False)
 
 
