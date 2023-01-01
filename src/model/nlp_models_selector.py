@@ -12,10 +12,10 @@ from src.model.utils.build_custom_transformer import \
 def get_model_and_tokenizer(
     model_name: str,
     num_labels: int,
-    droput: float,
-    att_droput: float,
-    max_length: int,
-    add_layers: bool,
+    droput: float = 0.2,
+    att_droput: float = 0.2,
+    max_length: int = 128,
+    add_layers: bool = False,
 ) -> object:
     """Selects the model type based on the model_name and num_label.
 
@@ -32,15 +32,19 @@ def get_model_and_tokenizer(
     """
     if "distilbert" in model_name:
         from transformers import (DistilBertConfig, DistilBertTokenizerFast,
-                                  TFDistilBertModel)
-
-        config = DistilBertConfig(
-            num_labels=num_labels,
-            dropout=droput,
-            attention_dropout=att_droput,
-            output_hidden_states=True,
-        )
-        model = TFDistilBertModel.from_pretrained(model_name, config=config)
+                                  TFDistilBertForSequenceClassification)
+        if add_layers:
+            config = DistilBertConfig(
+                num_labels=num_labels,
+                dropout=droput,
+                attention_dropout=att_droput,
+                output_hidden_states=True,
+            )
+        else:
+            config = DistilBertConfig(
+                num_labels=num_labels,
+            )
+        model = TFDistilBertForSequenceClassification.from_pretrained(model_name, config=config)
         tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
         if add_layers:
@@ -60,7 +64,7 @@ def get_model_and_tokenizer(
     return model, tokenizer
 
 
-# Define the model and the optimizer
+
 def model_fn(features, labels, mode, params):
     import tensorflow as tf
     from transformers import (AutoTokenizer,
