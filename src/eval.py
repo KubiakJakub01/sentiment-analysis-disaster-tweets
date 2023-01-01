@@ -1,5 +1,13 @@
 """
 Main inference script for the project.
+
+Run example:
+python src/eval.py -m models/bert-base-uncased \ 
+                    -t data/test.csv \
+                    -s results \
+                    -n 2 \ 
+                    -s results \
+                    -e accuracy precision recall f1 \
 """
 
 # Imports basic libraries
@@ -10,11 +18,11 @@ from pathlib import Path
 
 # Import huggingface libraries
 from datasets import load_dataset
-from transformers import pipeline
 
 # Import modules
 from src.model.nlp_models_selector import get_model_and_tokenizer
 from src.utils.compute_results import get_results, save_results
+from src.utils.get_predictions import get_prdiction
 from src.utils.nlp_metric import Metric
 
 
@@ -45,7 +53,9 @@ def get_params():
         help="Number of labels for the model.",
     )
     parser.add_argument(
-        "--save_predictions_path", "-s", type=str, help="Path to save the predictions."
+        "--save_predictions_path", 
+        "-s", type=str, 
+        help="Path to save the predictions."
     )
     parser.add_argument(
         "--metrics",
@@ -57,35 +67,6 @@ def get_params():
     )
     return parser.parse_args()
 
-
-def map_label_to_integers(label):
-    """Map labels to integers."""
-    label = 1 if "1" in label else 0
-    return label
-
-
-def get_prdiction(model, tokenizer, text):
-    """Get predictions for the model.
-
-    Args:
-        model (transformers.modeling_tf_utils.TFPreTrainedModel): Model to use for training.
-        tokenizer (transformers.PreTrainedTokenizerBase): Tokenizer to use for encoding the data.
-        text (list): List of text to predict.
-
-    Returns:
-        preds (dict): Dictionary with the predictions."""
-    clasificator = pipeline(task="sentiment-analysis", model=model, tokenizer=tokenizer)
-    preds = clasificator(text)
-
-    preds = [
-        {
-            "score": round(pred["score"], 4),
-            "labels": map_label_to_integers(pred["label"]),
-        }
-        for pred in preds
-    ]
-
-    return preds
 
 
 def save_predictions(preds, save_predictions_path):
