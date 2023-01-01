@@ -42,18 +42,16 @@ def get_params():
         help="Number of labels for the model.",
     )
     parser.add_argument(
-        "--save_predictions_path", 
-        "-s", 
-        type=str, 
-        help="Path to save the predictions."
+        "--save_predictions_path", "-s", type=str, help="Path to save the predictions."
     )
     return parser.parse_args()
+
 
 def map_label_to_integers(label):
     """Map labels to integers."""
     label = 1 if "1" in label else 0
     return label
-    
+
 
 def get_prdiction(model, tokenizer, id_list, text_list):
     """Get predictions for the model.
@@ -67,15 +65,14 @@ def get_prdiction(model, tokenizer, id_list, text_list):
         preds (dict): Dictionary with the predictions."""
     preds = []
     clasificator = pipeline(task="sentiment-analysis", model=model, tokenizer=tokenizer)
-    for pred in tqdm(clasificator(text_list),
-                    total=len(text_list), 
-                     desc="Predictions"):
-        preds.append( 
+    for pred in tqdm(clasificator(text_list), total=len(text_list), desc="Predictions"):
+        preds.append(
             {
                 "id": id_list,
                 "score": pred["score"],
                 "labels": map_label_to_integers(pred["label"]),
-            })
+            }
+        )
 
     return preds
 
@@ -111,15 +108,13 @@ if __name__ == "__main__":
 
     # Get model and tokenizer
     print("Loading model...")
-    model, tokenizer = get_model_and_tokenizer(model_name=str(MODEL_PATH), 
-                                               num_labels=NUM_LABELS)
+    model, tokenizer = get_model_and_tokenizer(
+        model_name=str(MODEL_PATH), num_labels=NUM_LABELS
+    )
 
     # Get predictions
     print("Making predictions...")
-    preds = get_prdiction(model, 
-                        tokenizer, 
-                        df["id"].to_list(),
-                        df["text"].tolist())
+    preds = get_prdiction(model, tokenizer, df["id"].to_list(), df["text"].tolist())
 
     # Save predictions
     print("Saving predictions...")
