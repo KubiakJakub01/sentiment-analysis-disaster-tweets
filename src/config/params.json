@@ -3,8 +3,10 @@
     {
         "train_path": "data/train.csv",
         "valid_path": "data/valid.csv",
+        "augumented_path": "data/augumented.csv",
         "model_name": "distilbert-base-uncased",
-        "add_layers": true,
+        "model_save_name": "finetuned-distilbert-base-augumented",
+        "add_layers": false,
         "output_dir": "output",
         "num_labels": 2,
         "target_label": "label",

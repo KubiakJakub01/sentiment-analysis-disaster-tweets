@@ -18,9 +18,13 @@ class TrainParams:
     target_label: str = field(metadata={"help": "Target label to use."})
     text_column: str = field(metadata={"help": "Column containing the text to use."})
     add_layers: bool = field(default=False, metadata={"help": "If add input and binary output layers."})
+    model_save_name: Optional[str] = field(default=None, metadata={"help": "Name of the model to save."})
     remove_columns: Optional[List[str]] = field(default_factory=list, metadata={"help": "Columns to remove from the dataset."})
     augmented_path: Optional[str] = field(default=None, metadata={"help": "Path to the augmented set."})
 
+    def __post_init__(self):
+        if self.model_save_name is None:
+            self.model_save_name = self.model_name
 
 @dataclass
 class Hyperparameters:
