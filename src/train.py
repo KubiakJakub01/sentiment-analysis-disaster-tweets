@@ -9,6 +9,7 @@ Main training script for the project.
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # Import huggingface libraries
 from datasets import load_dataset
@@ -123,7 +124,7 @@ def prepare_callbacks(
             label_cols=target_label,
         ),
         PushToHubCallback(
-            output_dir=output_dir,
+            output_dir=output_dir.name,
             tokenizer=tokenizer,
             save_strategy=hiperparameters.save_strategy,
         ),
@@ -244,14 +245,15 @@ if __name__ == "__main__":
     model, tokenizer = get_model_and_tokenizer(
         model_name=params.train_params.model_name,
         num_labels=params.train_params.num_labels,
-        add_layers=params.hyperparameters.add_layers,
+        add_layers=params.train_params.add_layers,
         droput=params.hyperparameters.dropout,
         att_droput=params.hyperparameters.attention_dropout,
         max_length=params.hyperparameters.max_length,
     )
 
     # Create the output directory
-    params.train_params.output_dir = f"{params.train_params.output_dir}_{start_time}"
+    params.train_params.output_dir = Path(params.train_params.output_dir) / \
+                                f"{params.train_params.model_save_name}_{start_time}"  
     os.makedirs(params.train_params.output_dir, exist_ok=True)
 
     # Train the model
