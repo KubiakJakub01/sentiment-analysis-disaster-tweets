@@ -1,15 +1,15 @@
 {
     "train_params":
     {
-        "train_path": "data/train.csv",
-        "valid_path": "data/valid.csv",
-        "augumented_path": "data/augumented.csv",
+        "train_path": "data/train_clean.csv",
+        "valid_path": "data/valid_clean.csv",
+        "augmented_path": "data/augumented_train.csv",
         "model_name": "distilbert-base-uncased",
         "model_save_name": "finetuned-distilbert-base-augumented",
         "add_layers": false,
         "output_dir": "output",
         "num_labels": 2,
-        "target_label": "label",
+        "target_label": "labels",
         "text_column": "text",
         "remove_columns": ["id", "keyword", "location", "text"]
     },
@@ -17,16 +17,16 @@
     {
         "epochs": 3,
         "learning_rate": 2e-5,
-        "dopout": 0.2,
+        "dropout": 0.2,
         "attention_dropout": 0.2,
         "metric": "accuracy",
         "max_length": 128,
-        "batch_size": 16,
+        "batch_size": 8,
+        "warmup_steps": 100,
         "weight_decay": 0.01,
-        "logging_dir": "logs",
-        "save_strategy": "steps",
+        "save_strategy": "epoch",
         "evaluation_strategy": "steps",
-        "eval_steps": 10,
+        "eval_steps": 100,
         "load_best_model_at_end": true,
         "greater_is_better": true
     }

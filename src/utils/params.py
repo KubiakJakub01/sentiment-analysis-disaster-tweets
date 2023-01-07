@@ -36,7 +36,7 @@ class Hyperparameters:
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
     batch_size: int = field(metadata={"help": "Batch size for training."})
     weight_decay: float = field(metadata={"help": "Weight decay to use."})
-    logging_dir: str = field(metadata={"help": "Directory to save logs."})
+    warmup_steps: int = field(metadata={"help": "Number of warmup steps."})
     save_strategy: str = field(metadata={"help": "Strategy to use for saving the model."})
     evaluation_strategy: str = field(metadata={"help": "Evaluation strategy to use."})
     eval_steps: int = field(metadata={"help": "Number of steps to evaluate the model."})

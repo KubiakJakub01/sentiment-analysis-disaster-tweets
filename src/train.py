@@ -40,6 +40,7 @@ def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) 
     Returns:
         dataset (dict): Dictionary containing the train and valid sets."""
     if augument_path:
+        # load only text and label columns
         dataset = load_dataset(
             "csv",
             data_files={"train": [train_path, augument_path], "validation": valid_path},
@@ -103,7 +104,9 @@ def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_f
 
 
 def prepare_callbacks(
-    hiperparameters, tokenizer, metric, valid_dataset, target_label, output_dir
+    hiperparameters, tokenizer, 
+    metric, valid_dataset, 
+    target_label, output_model_name, log_dir
 ):
     """Prepare the callbacks for training.
 
@@ -124,11 +127,11 @@ def prepare_callbacks(
             label_cols=target_label,
         ),
         PushToHubCallback(
-            output_dir=output_dir.name,
+            output_dir=output_model_name,
             tokenizer=tokenizer,
             save_strategy=hiperparameters.save_strategy,
         ),
-        TensorBoard(log_dir=hiperparameters.logging_dir),
+        TensorBoard(log_dir=log_dir),
     ]
     return callbacks
 
@@ -147,7 +150,7 @@ def train():
     dataset = load_dataset_from_csv(
         train_path=params.train_params.train_path,
         valid_path=params.train_params.valid_path,
-        augument_path=params.train_params.augument_path,
+        augument_path=params.train_params.augmented_path,
     )
 
     # Preprocess the data
@@ -157,7 +160,6 @@ def train():
     tokenized_dataset = dataset.map(
         tokenize_text,
         batched=True,
-        remove_columns=["id", "keyword", "location", "text"],
     )
 
     # Load data collator
@@ -206,15 +208,17 @@ def train():
         metric=metric,
         valid_dataset=tf_valid_dataset,
         target_label=[params.train_params.target_label],
-        output_dir=params.train_params.output_dir,
+        output_model_name=params.train_params.model_save_name,
+        log_dir=params.train_params.output_dir,
     )
 
     # Fit the model
     model.fit(
         tf_train_dataset,
         validation_data=tf_valid_dataset,
-        epochs=params.hyperparameters.num_train_epochs,
+        epochs=params.hyperparameters.epochs,
         callbacks=callbacks,
+        use_multiprocessing=True,
     )
 
 
