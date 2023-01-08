@@ -114,7 +114,7 @@ def evaluate():
     # Clean text
     test_dataset = test_dataset.map(
         lambda examples: {
-            params.text_column: [text_cleaning(examples[params.text_column])]
+            params.text_column: text_cleaning(examples[params.text_column])
         }
     )
 
