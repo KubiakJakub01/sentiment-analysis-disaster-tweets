@@ -5,6 +5,7 @@ Compute results based on the predictions and labels.
 import argparse
 import json
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -49,7 +50,7 @@ def read_predictions(path_to_predictions):
     return preds
 
 
-def read_labels(path_to_labels):
+def read_labels(path_to_labels, target_column="target"):
     """Read labels from a csv file.
 
     Args:
@@ -58,7 +59,7 @@ def read_labels(path_to_labels):
     Returns:
         labels (list): List containing the labels."""
     df = pd.read_csv(path_to_labels)
-    labels = df["labels"].tolist()
+    labels = df[target_column].tolist()
     return labels
 
 
