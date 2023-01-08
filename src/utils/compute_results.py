@@ -27,6 +27,20 @@ def get_params():
         "--path_to_save_results", "-s", type=str, help="Path to save the results."
     )
     parser.add_argument(
+        "--text_column",
+        "-t",
+        type=str,
+        default="text",
+        help="Name of the column with the text.",
+    )
+    parser.add_argument(
+        "--id_column",
+        "-i",
+        type=str,
+        default="id",
+        help="Name of the column with the id.",
+    )
+    parser.add_argument(
         "--metrics",
         "-m",
         nargs="+",
