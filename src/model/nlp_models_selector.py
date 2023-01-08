@@ -11,7 +11,7 @@ from src.model.utils.build_custom_transformer import \
 
 def get_model_and_tokenizer(
     model_name: str,
-    num_labels: int,
+    num_labels: int = 2,
     droput: float = 0.2,
     att_droput: float = 0.2,
     max_length: int = 128,
