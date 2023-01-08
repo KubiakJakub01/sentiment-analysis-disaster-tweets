@@ -52,15 +52,16 @@ def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) 
     return dataset
 
 
-def preprocess_data(dataset: dict) -> dict:
+def preprocess_data(dataset: dict, text_column: str = "text") -> dict:
     """Preprocess the data.
 
     Args:
         dataset (dict): Dictionary containing the train and valid sets.
+        text_column (str): Name of the text column.
 
     Returns:
         dataset (dict): Dictionary containing cleaned the train and valid sets."""
-    dataset = dataset.map(lambda examples: {"text": [text_cleaning(examples["text"])]})
+    dataset = dataset.map(lambda examples: {text_column: [text_cleaning(examples[text_column])]})
     return dataset
 
 
@@ -130,6 +131,7 @@ def prepare_callbacks(
             output_dir=output_model_name,
             tokenizer=tokenizer,
             save_strategy=hiperparameters.save_strategy,
+            use_auth_token=True,
         ),
         TensorBoard(log_dir=log_dir),
     ]
