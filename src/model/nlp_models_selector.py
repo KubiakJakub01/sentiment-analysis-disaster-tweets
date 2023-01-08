@@ -37,7 +37,8 @@ def get_model_and_tokenizer(
             config = DistilBertConfig(
                 num_labels=num_labels,
                 dropout=droput,
-                attention_dropout=att_droput
+                attention_dropout=att_droput,
+                use_auth_token=True,
             )
         else:
             config = DistilBertConfig(
