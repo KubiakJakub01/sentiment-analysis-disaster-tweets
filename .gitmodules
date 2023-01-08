@@ -1,3 +1,7 @@
 [submodule "models/finetuned-distilbert-base-uncased"]
 	path = models/finetuned-distilbert-base-uncased
 	url = https://huggingface.co/KubiakJakub01/finetuned-distilbert-base-uncased
+
+[submodule "models/finetuned-distilbert-base-finetuned-distilbert-base-augumented"]
+	path = models/finetuned-distilbert-base-finetuned-distilbert-base-augumented
+	url = https://huggingface.co/KubiakJakub01/finetuned-distilbert-base-augumented
