@@ -5,9 +5,13 @@ Run example:
 python src/eval.py -m models/bert-base-uncased \ 
                     -t data/test.csv \
                     -s results \
+                    -b 8 \
                     -n 2 \ 
                     -s results \
                     -e accuracy precision recall f1 \
+                    --target_column target \
+                    --text_column text \
+                    --id_column id   
 """
 
 # Imports basic libraries
@@ -23,6 +27,7 @@ from datasets import load_dataset
 from src.model.nlp_models_selector import get_model_and_tokenizer
 from src.utils.compute_results import get_results, save_results
 from src.utils.get_predictions import get_prdiction
+from src.utils.text_cleaning import text_cleaning
 from src.utils.nlp_metric import Metric
 
 
@@ -33,10 +38,7 @@ def get_params():
         args (argparse.Namespace): Arguments from command line."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_path",
-        "-m",
-        type=str,
-        help="Path to checkpoint with the model to use.",
+        "--model_path", "-m", type=str, help="Path to checkpoint with the model to use."
     )
     parser.add_argument(
         "--path_to_test_data",
@@ -45,6 +47,7 @@ def get_params():
         default="data/test.csv",
         help="Path to the test set.",
     )
+    parser.add_argument("--batch_size", "-b", type=int, default=8)
     parser.add_argument(
         "--num_labels",
         "-n",
@@ -53,9 +56,7 @@ def get_params():
         help="Number of labels for the model.",
     )
     parser.add_argument(
-        "--save_predictions_path", 
-        "-s", type=str, 
-        help="Path to save the predictions."
+        "--save_predictions_path", "-s", type=str, help="Path to save the predictions."
     )
     parser.add_argument(
         "--metrics",
@@ -65,8 +66,25 @@ def get_params():
         help="Metrics to use.",
         default=["accuracy", "precision", "recall", "f1"],
     )
+    parser.add_argument(
+        "--target_column",
+        type=str,
+        default="target",
+        help="Name of the target column in the dataset.",
+    )
+    parser.add_argument(
+        "--text_column",
+        type=str,
+        default="text",
+        help="Name of the text column in the dataset.",
+    )
+    parser.add_argument(
+        "--id_column",
+        type=str,
+        default="id",
+        help="Name of the id column in the dataset.",
+    )
     return parser.parse_args()
-
 
 
 def save_predictions(preds, save_predictions_path):
@@ -89,14 +107,33 @@ def save_predictions(preds, save_predictions_path):
 def evaluate():
     """Evaluate the model."""
 
+    # Load test data
+    test_dataset = load_dataset("csv", data_files={"test": params.path_to_test_data})
+    test_dataset = test_dataset["test"]
+
+    # Clean text
+    test_dataset = test_dataset.map(
+        lambda examples: {
+            params.text_column: [text_cleaning(examples[params.text_column])]
+        }
+    )
+
     # Get predictions
-    preds = get_prdiction(model, tokenizer, test_dataset["text"])
+    preds = get_prdiction(
+        model=model,
+        tokenizer=tokenizer,
+        id_list=test_dataset[params.id_column],
+        text_list=test_dataset[params.text_column],
+        batch_size=params.batch_size,
+    )
 
     # Save predictions
     save_predictions(preds, SAVE_PREDICTIONS_PATH)
 
     # Compute metrics
-    results = get_results(preds, test_dataset["labels"], metrics)
+    results = get_results(
+        preds=preds, labels=test_dataset[params.target_column], metrics=metrics
+    )
 
     # Print metric results
     print(results)
@@ -121,11 +158,7 @@ if __name__ == "__main__":
     print(f"Save predictions path: {SAVE_PREDICTIONS_PATH}")
 
     # Load model and tokenizer
-    model, tokenizer = get_model_and_tokenizer(MODEL_NAME, NUM_LABELS)
-
-    # Load test data
-    test_dataset = load_dataset("csv", data_files={"test": params.path_to_test_data})
-    test_dataset = test_dataset["test"]
+    model, tokenizer = get_model_and_tokenizer(str(MODEL_PATH), NUM_LABELS)
 
     # Load metric
     print(f"Metrices: {params.metrics}")
