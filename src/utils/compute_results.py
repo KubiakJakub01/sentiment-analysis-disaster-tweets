@@ -5,7 +5,6 @@ Compute results based on the predictions and labels.
 import argparse
 import json
 from pathlib import Path
-from typing import List
 
 import pandas as pd
 
@@ -51,7 +50,7 @@ def get_params():
     return parser.parse_args()
 
 
-def read_predictions(path_to_predictions):
+def read_predictions(path_to_predictions: str) -> dict:
     """Read predictions from json file.
 
     Args:
@@ -64,11 +63,12 @@ def read_predictions(path_to_predictions):
     return preds
 
 
-def read_labels(path_to_labels, target_column="target"):
+def read_labels(path_to_labels: str, target_column: str) -> list:
     """Read labels from a csv file.
 
     Args:
         path_to_labels (str): Path to the labels.
+        target_column (str): Name of the column with the labels.
 
     Returns:
         labels (list): List containing the labels."""
@@ -77,7 +77,7 @@ def read_labels(path_to_labels, target_column="target"):
     return labels
 
 
-def get_results(preds, labels, metrics):
+def get_results(preds: list, labels: list, metrics: list) -> dict:
     """Get results for the model.
 
     Args:
@@ -94,7 +94,7 @@ def get_results(preds, labels, metrics):
     return results
 
 
-def save_results(results, save_predictions_path):
+def save_results(results: dict, save_predictions_path: str) -> None:
     """Save the results in a json file.
 
     Args:
