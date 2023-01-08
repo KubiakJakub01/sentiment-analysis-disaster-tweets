@@ -88,7 +88,7 @@ def get_results(preds: list, labels: list, metrics: list) -> dict:
     Returns:
         results (dict): Dictionary with the results."""
     results = {}
-    preds_labels = [pred["labels"] for pred in preds]
+    preds_labels = [pred["target"] for pred in preds]
     for metric in metrics:
         results[metric.metric_name] = metric.compute(preds_labels, labels)
     return results

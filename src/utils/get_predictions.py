@@ -13,6 +13,7 @@ from tqdm import tqdm
 from transformers import pipeline
 
 from src.model.nlp_models_selector import get_model_and_tokenizer
+from src.utils.text_cleaning import text_cleaning
 
 
 def get_params():
@@ -87,7 +88,7 @@ def get_prdiction(model, tokenizer, id_list, text_list, batch_size):
             {
                 "id": id_list[i],
                 "score": round(pred["score"], 4),
-                "labels": map_label_to_integers(pred["label"]),
+                "target": map_label_to_integers(pred["label"]),
             }
         )
 
@@ -130,6 +131,10 @@ if __name__ == "__main__":
         model_name=str(MODEL_PATH), num_labels=NUM_LABELS
     )
 
+    # Cleaning data
+    print("Cleaning data...")
+    df[args.text_column] = df[args.text_column].apply(lambda x: text_cleaning(x))
+
     # Get predictions
     print("Making predictions...")
     preds = get_prdiction(model=model, 
@@ -144,6 +149,6 @@ if __name__ == "__main__":
     save_predictions(preds=preds, 
                     save_predictions_path=SAVE_PREDICTIONS_PATH,
                     id_column=args.id_column,
-                    label_column="labels")
+                    label_column="target")
 
     print("Done!")
