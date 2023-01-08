@@ -1,9 +1,9 @@
 """
 Main training script for the project.
 """
-#pylint: disable=too-many-arguments
-#pylint: disable=redefined-outer-name
-#pylint: disable=unused-variable
+# pylint: disable=too-many-arguments
+# pylint: disable=redefined-outer-name
+# pylint: disable=unused-variable
 
 # Import basic libraries
 import os
@@ -14,17 +14,22 @@ from pathlib import Path
 # Import huggingface libraries
 from datasets import load_dataset
 from keras.callbacks import TensorBoard
+
 # Load the DistilBERT tokenizer to process the text field:
 from transformers import DataCollatorWithPadding, create_optimizer
+
 # Import metrics
 from transformers.keras_callbacks import KerasMetricCallback, PushToHubCallback
 
 # Import model and tokenizer selector class
 from src.model.nlp_models_selector import get_model_and_tokenizer
+
 # Import metrics
 from src.utils.nlp_metric import Metric
+
 # Import modules from src
 from src.utils.params import get_params
+
 # Import utils for text cleaning
 from src.utils.text_cleaning import text_cleaning
 
@@ -61,7 +66,9 @@ def preprocess_data(dataset: dict, text_column: str = "text") -> dict:
 
     Returns:
         dataset (dict): Dictionary containing cleaned the train and valid sets."""
-    dataset = dataset.map(lambda examples: {text_column: [text_cleaning(examples[text_column])]})
+    dataset = dataset.map(
+        lambda examples: {text_column: [text_cleaning(examples[text_column])]}
+    )
     return dataset
 
 
@@ -73,12 +80,14 @@ def tokenize_text(text):
 
     Returns:
         tokenized_data (dict): Dictionary containing the tokenized data."""
-    return tokenizer(text["text"], 
-                    truncation=True, 
-                    is_split_into_words=True,
-                    padding="longest",
-                    return_attention_mask=True,
-                    return_token_type_ids=False)
+    return tokenizer(
+        text["text"],
+        truncation=True,
+        is_split_into_words=True,
+        padding="longest",
+        return_attention_mask=True,
+        return_token_type_ids=False,
+    )
 
 
 def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_fn):
@@ -105,9 +114,13 @@ def prepare_dataset(dataset, columns, label_cols, batch_size, shuffle, collate_f
 
 
 def prepare_callbacks(
-    hiperparameters, tokenizer, 
-    metric, valid_dataset, 
-    target_label, output_model_name, log_dir
+    hiperparameters,
+    tokenizer,
+    metric,
+    valid_dataset,
+    target_label,
+    output_model_name,
+    log_dir,
 ):
     """Prepare the callbacks for training.
 
@@ -159,10 +172,7 @@ def train():
     dataset = preprocess_data(dataset)
 
     # Tokenize the data
-    tokenized_dataset = dataset.map(
-        tokenize_text,
-        batched=True,
-    )
+    tokenized_dataset = dataset.map(tokenize_text, batched=True)
 
     # Load data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="tf")
@@ -258,8 +268,10 @@ if __name__ == "__main__":
     )
 
     # Create the output directory
-    params.train_params.output_dir = Path(params.train_params.output_dir) / \
-                                f"{params.train_params.model_save_name}_{start_time}"  
+    params.train_params.output_dir = (
+        Path(params.train_params.output_dir)
+        / f"{params.train_params.model_save_name}_{start_time}"
+    )
     os.makedirs(params.train_params.output_dir, exist_ok=True)
 
     # Train the model

@@ -22,10 +22,10 @@ def get_params():
         args (argparse.Namespace): Arguments from command line."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_path",
-        "-m",
-        type=str,
-        help="Path to checkpoint with the model to use.",
+        "--model_path", "-m", type=str, help="Path to checkpoint with the model to use."
+    )
+    parser.add_argument(
+        "--save_predictions_path", "-s", type=str, help="Path to save the predictions."
     )
     parser.add_argument(
         "--path_to_test_data",
@@ -34,6 +34,7 @@ def get_params():
         default="data/test.csv",
         help="Path to the test set.",
     )
+    parser.add_argument("--batch_size", "-b", type=int, default=8)
     parser.add_argument(
         "--num_labels",
         "-n",
@@ -42,7 +43,16 @@ def get_params():
         help="Number of labels for the model.",
     )
     parser.add_argument(
-        "--save_predictions_path", "-s", type=str, help="Path to save the predictions."
+        "--text_column",
+        type=str,
+        default="text",
+        help="Name of the text column in the dataset.",
+    )
+    parser.add_argument(
+        "--id_column",
+        type=str,
+        default="id",
+        help="Name of the id column in the dataset.",
     )
     return parser.parse_args()
 
@@ -53,7 +63,7 @@ def map_label_to_integers(label):
     return label
 
 
-def get_prdiction(model, tokenizer, id_list, text_list):
+def get_prdiction(model, tokenizer, id_list, text_list, batch_size):
     """Get predictions for the model.
 
     Args:
@@ -64,12 +74,19 @@ def get_prdiction(model, tokenizer, id_list, text_list):
     Returns:
         preds (dict): Dictionary with the predictions."""
     preds = []
+    print(f"Sample text: {text_list[0:5]}")
     clasificator = pipeline(task="sentiment-analysis", model=model, tokenizer=tokenizer)
-    for pred in tqdm(clasificator(text_list), total=len(text_list), desc="Predictions"):
+    for i, pred in enumerate(
+        tqdm(
+            clasificator(text_list, batch_size=batch_size),
+            total=len(text_list),
+            desc="Predictions",
+        )
+    ):
         preds.append(
             {
-                "id": id_list,
-                "score": pred["score"],
+                "id": id_list[i],
+                "score": round(pred["score"], 4),
                 "labels": map_label_to_integers(pred["label"]),
             }
         )
@@ -77,7 +94,7 @@ def get_prdiction(model, tokenizer, id_list, text_list):
     return preds
 
 
-def save_predictions(preds, save_predictions_path):
+def save_predictions(preds, save_predictions_path, id_column, label_column):
     """Save predictions to json file.
 
     Args:
@@ -87,7 +104,8 @@ def save_predictions(preds, save_predictions_path):
     Returns:
         Create a file with the predictions."""
     # Save id and labels to csv file
-    df = pd.DataFrame(preds[["id", "labels"]])
+    # create dataframe from dictionary
+    df = pd.DataFrame(preds, columns=[id_column, label_column])
     df.to_csv(save_predictions_path, index=False)
 
 
@@ -101,7 +119,7 @@ if __name__ == "__main__":
     NUM_LABELS = args.num_labels
     START_TIME = datetime.now()
     START_TIME = START_TIME.strftime("%Y-%m-%d_%H-%M-%S")
-    SAVE_PREDICTIONS_PATH = Path(args.save_predictions_path) / MODEL_NAME / START_TIME
+    SAVE_PREDICTIONS_PATH = Path(args.save_predictions_path) / MODEL_NAME / f"results_{START_TIME}.csv"
 
     # Load test data
     df = pd.read_csv(args.path_to_test_data)
@@ -114,11 +132,18 @@ if __name__ == "__main__":
 
     # Get predictions
     print("Making predictions...")
-    preds = get_prdiction(model, tokenizer, df["id"].to_list(), df["text"].tolist())
+    preds = get_prdiction(model=model, 
+                        tokenizer=tokenizer, 
+                        id_list=df[args.id_column].to_list(), 
+                        text_list=df[args.text_column].tolist(),
+                        batch_size=args.batch_size)
 
     # Save predictions
     print("Saving predictions...")
     Path(SAVE_PREDICTIONS_PATH).parent.mkdir(parents=True, exist_ok=True)
-    save_predictions(preds, SAVE_PREDICTIONS_PATH)
+    save_predictions(preds=preds, 
+                    save_predictions_path=SAVE_PREDICTIONS_PATH,
+                    id_column=args.id_column,
+                    label_column="labels")
 
     print("Done!")
