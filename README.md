@@ -160,6 +160,7 @@ In fist experiment I based one only on dataset from kaggle. I fine-tuned DistilB
 | Recall | 0.786 |
 | F1 | 0.800 |
 
+For more information about model you can check huggingface [model card](https://huggingface.co/KubiakJakub01/finetuned-distilbert-base-uncased).
 ### models/finetuned-distilbert-base-augumented
 
 In second experiment beyond kaggle dataset I used augumented. I fine-tuned DistilBERT base uncased model. I used this same hyperparameters as above. I used 10% of data for validation. I used accuracy, precision, recall and f1 metrics. I got the following results:  
@@ -170,6 +171,8 @@ In second experiment beyond kaggle dataset I used augumented. I fine-tuned Disti
 | Precision | 0.801 |
 | Recall | 0.720 |
 | F1 | 0.759 |
+
+For more information about model you can check huggingface [model card](https://huggingface.co/KubiakJakub01/finetuned-distilbert-base-augumented).
 
 ### Submission
 
