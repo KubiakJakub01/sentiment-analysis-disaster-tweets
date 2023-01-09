@@ -22,6 +22,18 @@ def parse_args():
         help="Proportion of the data to include in the train split.",
     )
     parser.add_argument(
+        "--target_column",
+        type=str,
+        default="target",
+        help="Name of the target column in the dataset.",
+    )
+    parser.add_argument(
+        "--text_column",
+        type=str,
+        default="text",
+        help="Name of the text column in the dataset.",
+    )
+    parser.add_argument(
         "--random_state", type=int, default=42, help="Random state for reproducibility."
     )
     args = parser.parse_args()
@@ -46,6 +58,10 @@ def split_data(data_path: str, train_size: int = 0.8, random_state: int = 42) ->
     train, valid = train_test_split(
         data_df, train_size=train_size, random_state=random_state
     )
+
+    # Get only text and label columns
+    train = train[[params.text_column, params.target_column]]
+    valid = valid[[params.text_column, params.target_column]]
 
     # Data base dir
     data_base_dir = Path(data_path).parent
