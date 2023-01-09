@@ -7,7 +7,6 @@ python src/eval.py -m models/bert-base-uncased \
                     -s results \
                     -b 8 \
                     -n 2 \ 
-                    -s results \
                     -e accuracy precision recall f1 \
                     --target_column target \
                     --text_column text \
