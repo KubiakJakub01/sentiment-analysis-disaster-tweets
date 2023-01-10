@@ -1,5 +1,8 @@
 """
 Main training script for the project.
+
+Usage:
+    python3 -m src.train src/config/params.json
 """
 # pylint: disable=too-many-arguments
 # pylint: disable=redefined-outer-name
