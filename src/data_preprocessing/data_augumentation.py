@@ -1,5 +1,14 @@
 """
 Augument data by adding noise to the data
+
+Usage:
+    python src/data_preprocessing/data_augumentation.py [-p data/train.csv] \
+                                                    [-s data/augumented_train.csv] \
+                                                    [-m models/bert-base-uncased] \
+                                                    [-a substitute] \
+                                                    [-n 2] \
+                                                    [--aug_min 1] \
+                                                    [--aug_p 0.3]
 """
 
 # Import basic libraries
