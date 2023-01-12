@@ -75,7 +75,7 @@ def preprocess_data(dataset: dict, text_column: str = "text") -> dict:
     return dataset
 
 
-def tokenize_text(text):
+def tokenize_text(text: str):
     """Tokenize the data.
 
     Args:
