@@ -14,6 +14,9 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Import tensorflow libraries
+import tensorflow as tf
+
 # Import huggingface libraries
 from datasets import load_dataset
 from keras.callbacks import TensorBoard
@@ -224,7 +227,11 @@ def train():
     metric = Metric(params.hyperparameters.metric)
 
     # Compile the model
-    model.compile(optimizer=optimizer)
+    if params.model_params.add_layers:
+        model.compile(optimizer=optimizer, 
+                    loss=tf.keras.losses.BinaryCrossentropy())
+    else:
+        model.compile(optimizer=optimizer)
 
     # Set up the callbacks
     callbacks = prepare_callbacks(
@@ -247,6 +254,12 @@ def train():
         callbacks=callbacks,
         use_multiprocessing=True,
     )
+
+    # Save the model
+    if params.model_params.hub_model_id == None:
+        model_save_path = Path(params.model_params.model_output_dir) / \
+                        params.model_params.model_save_name     
+        model.save_pretrained(model_save_path)
 
 
 if __name__ == "__main__":
