@@ -12,15 +12,20 @@ from typing import List, Optional
 class TrainParams:
     train_path: str = field(metadata={"help": "Path to the train set."})
     valid_path: str = field(metadata={"help": "Path to the valid set."})
-    model_name: str = field(metadata={"help": "Name of the model to use."})
-    output_dir: str = field(metadata={"help": "Output directory for the model."})
-    num_labels: int = field(metadata={"help": "Number of labels to use."})
+    output_dir: str = field(metadata={"help": "Output directory for the training artifacts."})
     target_label: str = field(metadata={"help": "Target label to use."})
     text_column: str = field(metadata={"help": "Column containing the text to use."})
-    add_layers: bool = field(default=False, metadata={"help": "If add input and binary output layers."})
-    model_save_name: Optional[str] = field(default=None, metadata={"help": "Name of the model to save."})
     remove_columns: Optional[List[str]] = field(default_factory=list, metadata={"help": "Columns to remove from the dataset."})
     augmented_path: Optional[str] = field(default=None, metadata={"help": "Path to the augmented set."})
+
+@dataclass
+class ModelParams:
+    model_name: str = field(metadata={"help": "Name of the model to use."})
+    model_output_dir: str = field(metadata={"help": "Output directory for the model."})
+    model_save_name: Optional[str] = field(default=None, metadata={"help": "Name of the model to save."})
+    hub_model_id: Optional[str] = field(default=None, metadata={"help:": "Your huggingface-hub username. Default: None"})
+    add_layers: Optional[bool] = field(default=False, metadata={"help": "If add input and binary output layers."})
+    num_labels: Optional[int] = field(default=2, metadata={"help": "Number of labels to use. Default: 2"})
 
     def __post_init__(self):
         if self.model_save_name is None:
