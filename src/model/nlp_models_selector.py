@@ -32,23 +32,21 @@ def get_model_and_tokenizer(
     """
     if "distilbert" in model_name:
         from transformers import (DistilBertConfig, DistilBertTokenizerFast,
-                                  TFDistilBertForSequenceClassification)
+                                  TFDistilBertForSequenceClassification, TFDistilBertModel)
         if add_layers:
             config = DistilBertConfig(
                 num_labels=num_labels,
                 dropout=droput,
                 attention_dropout=att_droput,
-                use_auth_token=True,
             )
+            model = TFDistilBertModel.from_pretrained(model_name, config=config)
+            model = add_input_and_binary_output_layers(model, max_length)
         else:
             config = DistilBertConfig(
                 num_labels=num_labels,
             )
-        model = TFDistilBertForSequenceClassification.from_pretrained(model_name, config=config)
+            model = TFDistilBertForSequenceClassification.from_pretrained(model_name, config=config)
         tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
-
-        if add_layers:
-            model = add_input_and_binary_output_layers(model, max_length)
 
     elif "TFAutoModel" in model_name:
         from transformers import (AutoTokenizer,
