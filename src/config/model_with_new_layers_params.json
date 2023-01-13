@@ -1,0 +1,37 @@
+{
+    "train_params":
+    {
+        "train_path": "data/clean_train.csv",
+        "valid_path": "data/clean_valid.csv",
+        "output_dir": "output",
+        "target_label": "labels",
+        "text_column": "text",
+        "remove_columns": ["id", "keyword", "location", "text"]
+    },
+    "model_params":
+    {
+        "model_name": "distilbert-base-uncased",
+        "model_output_dir": "models",
+        "model_save_name": "finetuned-distilbert-base-with-new-layers",
+        "hub_model_id": "KubiakJakub01",
+        "add_layers": true,
+        "num_labels": 2
+    },
+    "hyperparameters":
+    {
+        "epochs": 3,
+        "learning_rate": 1e-5,
+        "dropout": 0.2,
+        "attention_dropout": 0.2,
+        "metric": "accuracy",
+        "max_length": 128,
+        "batch_size": 8,
+        "warmup_steps": 100,
+        "weight_decay": 0.01,
+        "save_strategy": "epoch",
+        "evaluation_strategy": "steps",
+        "eval_steps": 100,
+        "load_best_model_at_end": true,
+        "greater_is_better": true
+    }
+}
