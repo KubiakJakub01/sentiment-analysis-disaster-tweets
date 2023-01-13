@@ -4,14 +4,19 @@
         "train_path": "data/train_clean.csv",
         "valid_path": "data/valid_clean.csv",
         "augmented_path": "data/augumented_train.csv",
-        "model_name": "distilbert-base-uncased",
-        "model_save_name": "finetuned-distilbert-base-augumented",
-        "add_layers": false,
         "output_dir": "output",
-        "num_labels": 2,
         "target_label": "labels",
         "text_column": "text",
         "remove_columns": ["id", "keyword", "location", "text"]
+    },
+    "model_params":
+    {
+        "model_name": "distilbert-base-uncased",
+        "model_output_dir": "models",
+        "model_save_name": "finetuned-distilbert-base-uncased",
+        "hub_model_id": "KubiakJakub01",
+        "add_layers": false,
+        "num_labels": 2
     },
     "hyperparameters":
     {
