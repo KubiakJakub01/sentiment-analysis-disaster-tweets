@@ -13,7 +13,6 @@
         "model_name": "distilbert-base-uncased",
         "model_output_dir": "models",
         "model_save_name": "finetuned-distilbert-base-with-new-layers",
-        "hub_model_id": "KubiakJakub01",
         "add_layers": true,
         "num_labels": 2
     },
