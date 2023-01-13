@@ -233,7 +233,7 @@ def train():
         metric=metric,
         valid_dataset=tf_valid_dataset,
         target_label=[params.train_params.target_label],
-        model_output_dir=params.model_params.model_save_name,
+        model_output_dir=params.model_params.model_output_dir,
         model_save_name=params.model_params.model_save_name,
         hub_model_id=params.model_params.hub_model_id,
         log_dir=params.train_params.output_dir,
