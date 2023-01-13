@@ -122,7 +122,9 @@ def prepare_callbacks(
     metric,
     valid_dataset,
     target_label,
-    output_model_name,
+    model_output_dir,
+    model_save_name,
+    hub_model_id,
     log_dir,
 ):
     """Prepare the callbacks for training.
@@ -133,24 +135,32 @@ def prepare_callbacks(
             Tokenizer to use for encoding the data.
         metric (transformers.metric.Metric): Metric to use for training.
         valid_dataset (tf.data.Dataset): Dataset to use for validation.
+        target_label (list): List of labels to use.
+        model_output_dir (str): Path to the output directory.
+        model_save_name (str): Name of the model to save.
+        hub_model_id (str): Model id to use for saving the model to the hub.
+        log_dir (str): Path to the log directory.
 
     Returns:
         callbacks (list): List containing the callbacks for training."""
-    callbacks = [
-        KerasMetricCallback(
-            metric_fn=metric.compute_metrics,
-            eval_dataset=valid_dataset,
-            batch_size=hiperparameters.batch_size,
-            label_cols=target_label,
-        ),
-        PushToHubCallback(
-            output_dir=output_model_name,
+    keras_metric_callback = KerasMetricCallback(
+        metric_fn=metric.compute_metrics,
+        eval_dataset=valid_dataset,
+        batch_size=hiperparameters.batch_size,
+        label_cols=target_label,
+    )
+    tensorboard_callback = TensorBoard(log_dir=log_dir)
+
+    if hub_model_id != None:
+        push_to_hub_callback = PushToHubCallback(
+            output_dir=model_output_dir,
             tokenizer=tokenizer,
             save_strategy=hiperparameters.save_strategy,
-            use_auth_token=True,
-        ),
-        TensorBoard(log_dir=log_dir),
-    ]
+            hub_model_id=f"{hub_model_id}/{model_save_name}",
+        )
+        callbacks = [keras_metric_callback, push_to_hub_callback, tensorboard_callback]
+    else:
+        callbacks = [keras_metric_callback, tensorboard_callback]
     return callbacks
 
 
@@ -223,7 +233,9 @@ def train():
         metric=metric,
         valid_dataset=tf_valid_dataset,
         target_label=[params.train_params.target_label],
-        output_model_name=params.train_params.model_save_name,
+        model_output_dir=params.model_params.model_save_name,
+        model_save_name=params.model_params.model_save_name,
+        hub_model_id=params.model_params.hub_model_id,
         log_dir=params.train_params.output_dir,
     )
 
@@ -249,22 +261,17 @@ if __name__ == "__main__":
         params = get_params(sys.argv[1])
     else:
         print(
-            """No config file provided. Specify a config file with the following format:
-                { "train_path": "path/to/train.csv",
-                  "valid_path": "path/to/valid.csv",
-                  "model_name": "distilbert-base-uncased",
-                  "output_dir": "path/to/output_dir",
-                  "num_labels": 2,
-                  "target_label": "label",
-                  "augmented_path": "path/to/augmented.csv"""
+            """No config file provided. Specify a config file. 
+            Check example config file in the config folder: src/config/params.json.
+            Or look at the README for more information."""
         )
         sys.exit(1)
 
     # Load model, and tokenizer
     model, tokenizer = get_model_and_tokenizer(
-        model_name=params.train_params.model_name,
-        num_labels=params.train_params.num_labels,
-        add_layers=params.train_params.add_layers,
+        model_name=params.model_params.model_name,
+        num_labels=params.model_params.num_labels,
+        add_layers=params.model_params.add_layers,
         droput=params.hyperparameters.dropout,
         att_droput=params.hyperparameters.attention_dropout,
         max_length=params.hyperparameters.max_length,
@@ -273,9 +280,12 @@ if __name__ == "__main__":
     # Create the output directory
     params.train_params.output_dir = (
         Path(params.train_params.output_dir)
-        / f"{params.train_params.model_save_name}_{start_time}"
+        / f"{params.model_params.model_save_name}_{start_time}"
     )
     os.makedirs(params.train_params.output_dir, exist_ok=True)
+
+    # Create model output directory
+    os.makedirs(params.model_params.model_output_dir, exist_ok=True)
 
     # Train the model
     train()
