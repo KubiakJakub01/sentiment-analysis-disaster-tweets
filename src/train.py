@@ -30,6 +30,9 @@ from transformers.keras_callbacks import KerasMetricCallback, PushToHubCallback
 # Import model and tokenizer selector class
 from src.model.nlp_models_selector import get_model_and_tokenizer
 
+# Import utils for training
+from src.model.utils.fit_custom_transformer import fit_custom_transformer
+
 # Import metrics
 from src.utils.nlp_metric import Metric
 
@@ -226,12 +229,6 @@ def train():
     # Set up the metric
     metric = Metric(params.hyperparameters.metric)
 
-    # Compile the model
-    if params.model_params.add_layers:
-        model.compile(optimizer=optimizer, loss=tf.keras.losses.BinaryCrossentropy())
-    else:
-        model.compile(optimizer=optimizer)
-
     # Set up the callbacks
     callbacks = prepare_callbacks(
         hiperparameters=params.hyperparameters,
@@ -245,14 +242,27 @@ def train():
         log_dir=params.train_params.output_dir,
     )
 
-    # Fit the model
-    model.fit(
-        tf_train_dataset,
-        validation_data=tf_valid_dataset,
-        epochs=params.hyperparameters.epochs,
-        callbacks=callbacks,
-        use_multiprocessing=params.model_params.use_multiprocessing,
-    )
+    # Compile the model
+    if params.model_params.add_layers:
+        fit_custom_transformer(
+                            model=model, 
+                            train_dataset=tf_train_dataset,
+                            valid_dataset=tf_valid_dataset,
+                            params=params.hyperparameters,
+                            optimizer=optimizer,
+                            metrics=params.hyperparameters.metric,
+                            callbacks=callbacks
+        )
+    else:
+        model.compile(optimizer=optimizer)
+        # Fit the model
+        model.fit(
+            tf_train_dataset,
+            validation_data=tf_valid_dataset,
+            epochs=params.hyperparameters.epochs,
+            callbacks=callbacks,
+            use_multiprocessing=params.model_params.use_multiprocessing,
+        )
 
     # Save the model
     if params.model_params.hub_model_id is None:
