@@ -16,7 +16,8 @@
         "model_save_name": "finetuned-distilbert-base-uncased",
         "hub_model_id": "KubiakJakub01",
         "add_layers": false,
-        "num_labels": 2
+        "num_labels": 2,
+        "use_multiprocessing": false
     },
     "hyperparameters":
     {

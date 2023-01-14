@@ -41,6 +41,9 @@ class ModelParams:
     num_labels: Optional[int] = field(
         default=2, metadata={"help": "Number of labels to use. Default: 2"}
     )
+    use_multiprocessing: Optional[bool] = field(
+        default=False, metadata={"help": "Whether to use multiprocessing."}
+    )
 
     def __post_init__(self):
         if self.model_save_name is None:

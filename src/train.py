@@ -252,7 +252,7 @@ def train():
         validation_data=tf_valid_dataset,
         epochs=params.hyperparameters.epochs,
         callbacks=callbacks,
-        use_multiprocessing=True,
+        use_multiprocessing=params.model_params.use_multiprocessing,
     )
 
     # Save the model
