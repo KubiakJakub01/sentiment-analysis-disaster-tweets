@@ -55,6 +55,7 @@ class Hyperparameters:
     attention_dropout: float = field(metadata={"help": "Attention dropout to use."})
     metric: str = field(metadata={"help": "Metric to use for the best model."})
     max_length: int = field(metadata={"help": "Maximum length of the input sequence."})
+    padding: str = field(metadata={"help": "Padding to use."})
     batch_size: int = field(metadata={"help": "Batch size for training."})
     weight_decay: float = field(metadata={"help": "Weight decay to use."})
     warmup_steps: int = field(metadata={"help": "Number of warmup steps."})

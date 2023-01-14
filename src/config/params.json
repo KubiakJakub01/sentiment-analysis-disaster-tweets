@@ -26,6 +26,7 @@
         "attention_dropout": 0.2,
         "metric": "accuracy",
         "max_length": 128,
+        "padding": "max_length",
         "batch_size": 8,
         "warmup_steps": 100,
         "weight_decay": 0.01,

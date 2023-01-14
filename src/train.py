@@ -87,10 +87,10 @@ def tokenize_text(text: str):
     Returns:
         tokenized_data (dict): Dictionary containing the tokenized data."""
     return tokenizer(
-        text["text"],
+        text[params.train_params.text_column],
         truncation=True,
         is_split_into_words=True,
-        padding="longest",
+        padding=params.hyperparameters.padding,
         return_attention_mask=True,
         return_token_type_ids=False,
     )
