@@ -24,6 +24,7 @@ def text_cleaning(x, stop_words=stopwords.words("english")):
     x = " ".join([word for word in x.split(" ") if word not in stop_words])
     x = x.encode("ascii", "ignore").decode()
     x = re.sub(r"https*\S+", " ", x)
+    x = re.sub(r'\n', " ", x)
     x = re.sub(r"@\S+", " ", x)
     x = re.sub(r"#\S+", " ", x)
     x = re.sub(r"\'\w+", "", x)
