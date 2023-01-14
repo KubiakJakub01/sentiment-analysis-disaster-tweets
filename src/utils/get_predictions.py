@@ -2,7 +2,15 @@
 Make predictions on test data and save to final csv file using a trained model.
 
 Usage:
-    python3 -m src.utils.get_predictions -m <model_path> -t <path_to_test_data> -n <num_labels> -s <save_predictions_path>
+    python3 -m src.utils.get_predictions -m <model_path> \
+                                        -s <save_predictions_path> \
+                                        -t <path_to_test_data> \                                       
+                                        -b <batch_size> \
+                                        -n <num_labels> \
+                                        --task <task> \
+                                        --text_column <text_column> \
+                                        --id_column <id_column> 
+                                        
 """
 import argparse
 from datetime import datetime
@@ -34,6 +42,12 @@ def get_params():
         type=str,
         default="data/test.csv",
         help="Path to the test set.",
+    )
+    parser.add_argument(
+        "--task",
+        type=str,
+        default="sentiment-analysis",
+        help="Task to perform: sentiment-analysis or text-classification.",
     )
     parser.add_argument("--batch_size", "-b", type=int, default=8)
     parser.add_argument(
@@ -141,6 +155,7 @@ if __name__ == "__main__":
     print("Making predictions...")
     preds = get_prdiction(model=model, 
                         tokenizer=tokenizer, 
+                        task=args.task,
                         id_list=df[args.id_column].to_list(), 
                         text_list=df[args.text_column].tolist(),
                         batch_size=args.batch_size)
