@@ -248,7 +248,8 @@ def train():
                             model=model, 
                             train_dataset=tf_train_dataset,
                             valid_dataset=tf_valid_dataset,
-                            params=params.hyperparameters,
+                            epochs=params.hyperparameters.epochs,
+                            batch_size=params.hyperparameters.batch_size,
                             optimizer=optimizer,
                             metrics=params.hyperparameters.metric,
                             callbacks=callbacks

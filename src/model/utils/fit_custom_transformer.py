@@ -8,7 +8,8 @@ def fit_custom_transformer(
     model: tf.keras.models.Model,
     train_dataset: tf.data.Dataset,
     valid_dataset: tf.data.Dataset,
-    params: dict,
+    epochs: int,
+    batch_size: int,
     optimizer: tf.keras.optimizers.Optimizer,
     metrics: list,
     callbacks: list,
@@ -19,7 +20,8 @@ def fit_custom_transformer(
         model (tf.keras.models.Model): Model to fit.
         train_dataset (tf.data.Dataset): Train dataset.
         valid_dataset (tf.data.Dataset): Valid dataset.
-        params (dict): Dictionary containing the parameters.
+        epochs (int): Number of epochs.
+        batch_size (int): Batch size.
         optimizer (tf.keras.optimizers.Optimizer): Optimizer to use.
         metrics (list): List of metrics to use.
         callbacks (list): List of callbacks to use.
@@ -34,8 +36,8 @@ def fit_custom_transformer(
     model.fit(
         train_dataset,
         validation_data=valid_dataset,
-        epochs=params["epochs"],
-        batch_size=params["batch_size"],
+        epochs=epochs,
+        batch_size=batch_size,
         callbacks=callbacks,
     )
 
