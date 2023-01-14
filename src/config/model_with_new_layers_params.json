@@ -14,16 +14,18 @@
         "model_output_dir": "models",
         "model_save_name": "finetuned-distilbert-base-with-new-layers",
         "add_layers": true,
-        "num_labels": 2
+        "num_labels": 2,
+        "use_multiprocessing": true 
     },
     "hyperparameters":
     {
         "epochs": 3,
-        "learning_rate": 1e-5,
+        "learning_rate": 5e-5,
         "dropout": 0.2,
         "attention_dropout": 0.2,
         "metric": "accuracy",
         "max_length": 128,
+        "padding": "max_length",
         "batch_size": 8,
         "warmup_steps": 100,
         "weight_decay": 0.01,
