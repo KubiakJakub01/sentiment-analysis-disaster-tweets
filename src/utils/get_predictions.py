@@ -1,17 +1,21 @@
-"""
+r"""
 Make predictions on test data and save to final csv file using a trained model.
 
 Usage:
     python3 -m src.utils.get_predictions -m <model_path> \
                                         -s <save_predictions_path> \
-                                        -t <path_to_test_data> \                                       
+                                        -t <path_to_test_data> \
                                         -b <batch_size> \
                                         -n <num_labels> \
                                         --task <task> \
                                         --text_column <text_column> \
-                                        --id_column <id_column> 
-                                        
+                                        --id_column <id_column>
 """
+# pylint: disable=too-many-arguments
+# pylint: disable=redefined-outer-name
+# pylint: disable=invalid-name
+
+# Standard library imports
 import argparse
 from datetime import datetime
 from pathlib import Path
@@ -20,6 +24,7 @@ import pandas as pd
 from tqdm import tqdm
 from transformers import pipeline
 
+# Import src modules
 from src.model.nlp_models_selector import get_model_and_tokenizer
 from src.utils.text_cleaning import text_cleaning
 
@@ -136,7 +141,9 @@ if __name__ == "__main__":
     NUM_LABELS = args.num_labels
     START_TIME = datetime.now()
     START_TIME = START_TIME.strftime("%Y-%m-%d_%H-%M-%S")
-    SAVE_PREDICTIONS_PATH = Path(args.save_predictions_path) / MODEL_NAME / f"results_{START_TIME}.csv"
+    SAVE_PREDICTIONS_PATH = (
+        Path(args.save_predictions_path) / MODEL_NAME / f"results_{START_TIME}.csv"
+    )
 
     # Load test data
     df = pd.read_csv(args.path_to_test_data)
@@ -153,19 +160,23 @@ if __name__ == "__main__":
 
     # Get predictions
     print("Making predictions...")
-    preds = get_prdiction(model=model, 
-                        tokenizer=tokenizer, 
-                        task=args.task,
-                        id_list=df[args.id_column].to_list(), 
-                        text_list=df[args.text_column].tolist(),
-                        batch_size=args.batch_size)
+    preds = get_prdiction(
+        model=model,
+        tokenizer=tokenizer,
+        task=args.task,
+        id_list=df[args.id_column].to_list(),
+        text_list=df[args.text_column].tolist(),
+        batch_size=args.batch_size,
+    )
 
     # Save predictions
     print("Saving predictions...")
     Path(SAVE_PREDICTIONS_PATH).parent.mkdir(parents=True, exist_ok=True)
-    save_predictions(preds=preds, 
-                    save_predictions_path=SAVE_PREDICTIONS_PATH,
-                    id_column=args.id_column,
-                    label_column="target")
+    save_predictions(
+        preds=preds,
+        save_predictions_path=SAVE_PREDICTIONS_PATH,
+        id_column=args.id_column,
+        label_column="target",
+    )
 
     print("Done!")

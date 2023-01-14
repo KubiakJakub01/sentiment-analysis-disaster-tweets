@@ -1,16 +1,17 @@
-"""
+r"""
 Main inference script for the project.
 
 Run example:
-python src/eval.py -m models/bert-base-uncased \ 
+python src/eval.py -m models/bert-base-uncased \
                     -t data/test.csv \
                     -s results \
                     -b 8 \
-                    -n 2 \ 
+                    -n 2 \
                     -e accuracy precision recall f1 \
+                    --task sentiment-analysis \
                     --target_column target \
                     --text_column text \
-                    --id_column id   
+                    --id_column id
 """
 
 # Imports basic libraries

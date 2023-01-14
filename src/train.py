@@ -154,7 +154,7 @@ def prepare_callbacks(
     )
     tensorboard_callback = TensorBoard(log_dir=log_dir)
 
-    if hub_model_id != None:
+    if hub_model_id is not None:
         push_to_hub_callback = PushToHubCallback(
             output_dir=model_output_dir,
             tokenizer=tokenizer,
@@ -228,8 +228,7 @@ def train():
 
     # Compile the model
     if params.model_params.add_layers:
-        model.compile(optimizer=optimizer, 
-                    loss=tf.keras.losses.BinaryCrossentropy())
+        model.compile(optimizer=optimizer, loss=tf.keras.losses.BinaryCrossentropy())
     else:
         model.compile(optimizer=optimizer)
 
@@ -256,9 +255,11 @@ def train():
     )
 
     # Save the model
-    if params.model_params.hub_model_id == None:
-        model_save_path = Path(params.model_params.model_output_dir) / \
-                        params.model_params.model_save_name     
+    if params.model_params.hub_model_id is None:
+        model_save_path = (
+            Path(params.model_params.model_output_dir)
+            / params.model_params.model_save_name
+        )
         model.save_pretrained(model_save_path)
 
 
@@ -274,7 +275,7 @@ if __name__ == "__main__":
         params = get_params(sys.argv[1])
     else:
         print(
-            """No config file provided. Specify a config file. 
+            """No config file provided. Specify a config file.
             Check example config file in the config folder: src/config/params.json.
             Or look at the README for more information."""
         )
