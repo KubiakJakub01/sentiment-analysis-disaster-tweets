@@ -66,6 +66,12 @@ def get_params():
         default=["accuracy", "precision", "recall", "f1"],
     )
     parser.add_argument(
+        "--task",
+        type=str,
+        default="sentiment-analysis",
+        help="Task to perform: sentiment-analysis or text-classification.",
+    )
+    parser.add_argument(
         "--target_column",
         type=str,
         default="target",
@@ -121,6 +127,7 @@ def evaluate():
     preds = get_prdiction(
         model=model,
         tokenizer=tokenizer,
+        task=params.task,
         id_list=test_dataset[params.id_column],
         text_list=test_dataset[params.text_column],
         batch_size=params.batch_size,

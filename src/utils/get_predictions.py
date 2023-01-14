@@ -64,19 +64,21 @@ def map_label_to_integers(label):
     return label
 
 
-def get_prdiction(model, tokenizer, id_list, text_list, batch_size):
+def get_prdiction(model, tokenizer, task, id_list, text_list, batch_size):
     """Get predictions for the model.
 
     Args:
         model (transformers.modeling_tf_utils.TFPreTrainedModel): Model to use for training.
         tokenizer (transformers.PreTrainedTokenizerBase): Tokenizer to use for encoding the data.
-        text (list): List of text to predict.
+        task (str): Task to use for the model.
+        id_list (list): List with the ids of the samples.
+        text_list (list): List with the text of the samples.
+        batch_size (int): Batch size to use for the predictions.
 
     Returns:
         preds (dict): Dictionary with the predictions."""
     preds = []
-    print(f"Sample text: {text_list[0:5]}")
-    clasificator = pipeline(task="sentiment-analysis", model=model, tokenizer=tokenizer)
+    clasificator = pipeline(task=task, model=model, tokenizer=tokenizer)
     for i, pred in enumerate(
         tqdm(
             clasificator(text_list, batch_size=batch_size),
