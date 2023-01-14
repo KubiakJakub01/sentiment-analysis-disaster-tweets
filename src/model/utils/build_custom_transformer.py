@@ -18,6 +18,10 @@ def add_input_and_binary_output_layers(transformer, max_len):
         model (transformers.modeling_tf_utils.TFPreTrainedModel):
             Binary classifier model.
     """
+    # Make DistilBert layers non-trainable
+    for layer in transformer.layers:
+        layer.trainable = False
+
     # Define weights initializer
     weights_initializer = tf.keras.initializers.GlorotNormal(seed=42)
 
