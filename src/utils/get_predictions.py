@@ -83,7 +83,9 @@ def map_label_to_integers(label):
     return label
 
 
-def get_prdiction(model, tokenizer, task, id_list, text_list, batch_size):
+def get_prdiction(
+    model, tokenizer, id_list, text_list, batch_size=8, task="sentiment-analysis"
+):
     """Get predictions for the model.
 
     Args:
