@@ -40,11 +40,7 @@ def get_params():
         help="Path to save the augumented data.",
     )
     parser.add_argument(
-        "--model_name",
-        "-m",
-        type=str,
-        default="bert-base-uncased",
-        help="Model name.",
+        "--model_name", "-m", type=str, default="bert-base-uncased", help="Model name."
     )
     parser.add_argument(
         "--augumentation_type",
@@ -54,23 +50,13 @@ def get_params():
         help="Augumentation type to use.",
     )
     parser.add_argument(
-        "--num_threads",
-        "-n",
-        type=int,
-        default=4,
-        help="Number of threads to use.",
+        "--num_threads", "-n", type=int, default=4, help="Number of threads to use."
     )
     parser.add_argument(
-        "--aug_min",
-        type=int,
-        default=1,
-        help="Minimum number of words to augment.",
+        "--aug_min", type=int, default=1, help="Minimum number of words to augment."
     )
     parser.add_argument(
-        "--aug_p",
-        type=float,
-        default=0.3,
-        help="Probability of words to augment.",
+        "--aug_p", type=float, default=0.3, help="Probability of words to augment."
     )
     return parser.parse_args()
 
@@ -144,7 +130,7 @@ if __name__ == "__main__":
     )
 
     print("Augumenting data...")
-    df = augument_data(df, aug, 4)
+    df = augument_data(df=df, aug=aug, num_threads=args.num_threads)
 
     # Save the data
     print(f"Saving data to: {args.path_to_save_data}")
