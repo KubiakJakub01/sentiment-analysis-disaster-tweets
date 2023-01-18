@@ -10,6 +10,8 @@ Usage:
                                                     [--aug_min 1] \
                                                     [--aug_p 0.3]
 """
+# pylint: disable=redefined-outer-name
+# pylint: disable=invalid-name
 
 # Import basic libraries
 import argparse
