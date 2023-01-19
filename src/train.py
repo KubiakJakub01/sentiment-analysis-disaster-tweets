@@ -11,6 +11,7 @@ Usage:
 # Import basic libraries
 import os
 import sys
+import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -42,6 +43,15 @@ from src.utils.params import get_params
 # Import utils for text cleaning
 from src.utils.text_cleaning import text_cleaning
 
+
+# Set the logging configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+# Get the logger
+logger = logging.getLogger(__name__)
 
 def load_dataset_from_csv(train_path: str, valid_path: str, augument_path: str) -> None:
     """Load the train and valid sets.
@@ -285,12 +295,12 @@ if __name__ == "__main__":
         # Load the parameters from the config file
         params = get_params(sys.argv[1])
     else:
-        print(
+        message = (
             """No config file provided. Specify a config file.
             Check example config file in the config folder: src/config/params.json.
             Or look at the README for more information."""
         )
-        sys.exit(1)
+        raise ValueError(message)
 
     # Load model, and tokenizer
     model, tokenizer = get_model_and_tokenizer(
