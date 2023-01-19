@@ -206,6 +206,7 @@ def train():
     # Load data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="tf")
 
+    logger.debug("Preparing the dataset for training")
     # Prepare the dataset for training
     tf_train_dataset = prepare_dataset(
         tokenized_dataset["train"],
@@ -216,6 +217,7 @@ def train():
         collate_fn=data_collator,
     )
 
+    logger.debug("Preparing the dataset for validation")
     # Prepare the dataset for validation
     tf_valid_dataset = prepare_dataset(
         tokenized_dataset["validation"],
@@ -252,6 +254,7 @@ def train():
         log_dir=params.train_params.output_dir,
     )
 
+    logger.info("Starting the training")
     # Compile the model
     if params.model_params.add_layers:
         fit_custom_transformer(
@@ -282,6 +285,7 @@ def train():
             / params.model_params.model_save_name
         )
         model.save_pretrained(model_save_path)
+        logger.info(f"Model saved to {model_save_path}")
 
 
 if __name__ == "__main__":
@@ -289,10 +293,12 @@ if __name__ == "__main__":
     # Get start time
     start_time = datetime.now()
     start_time = start_time.strftime("%Y-%m-%d_%H-%M-%S")
+    logger.info(f"Start time: {start_time}")
 
     # Load parameters from config json file
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # Load the parameters from the config file
+        logger.info(f"Loading parameters from {sys.argv[1]}")
         params = get_params(sys.argv[1])
     else:
         message = (
@@ -302,6 +308,7 @@ if __name__ == "__main__":
         )
         raise ValueError(message)
 
+    logger.info(f"Parameters: {params}")
     # Load model, and tokenizer
     model, tokenizer = get_model_and_tokenizer(
         model_name=params.model_params.model_name,
@@ -318,9 +325,11 @@ if __name__ == "__main__":
         / f"{params.model_params.model_save_name}_{start_time}"
     )
     os.makedirs(params.train_params.output_dir, exist_ok=True)
+    logger.debug(f"Output directory: {params.train_params.output_dir}")
 
     # Create model output directory
     os.makedirs(params.model_params.model_output_dir, exist_ok=True)
+    logger.debug(f"Model output directory: {params.model_params.model_output_dir}")
 
     # Train the model
     train()
