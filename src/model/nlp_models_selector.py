@@ -5,8 +5,11 @@ within this class.
 """
 # pylint: disable=import-outside-topleve
 
+import logging
 from src.model.utils.build_custom_transformer import add_input_and_binary_output_layers
 
+# Get the logger
+logger = logging.getLogger(__name__)
 
 def get_model_and_tokenizer(
     model_name: str,
@@ -29,6 +32,7 @@ def get_model_and_tokenizer(
         tokenizer (transformers.tokenization_utils_base.PreTrainedTokenizerBase):
             Tokenizer to use for encoding the data.
     """
+    logger.info("Loading model: %s", model_name)
     if add_layers:
         from transformers import (
             DistilBertConfig,
@@ -40,6 +44,7 @@ def get_model_and_tokenizer(
             num_labels=num_labels, dropout=droput, attention_dropout=att_droput
         )
         model = TFDistilBertModel.from_pretrained(model_name, config=config)
+        logger.info("Adding input and binary output layers.")
         model = add_input_and_binary_output_layers(model, max_length)
         tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
 
@@ -65,6 +70,7 @@ def get_model_and_tokenizer(
         tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     else:
+        logger.error("Model not supported.")
         raise ValueError("Model not supported.")
     return model, tokenizer
 
