@@ -17,6 +17,7 @@ python src/eval.py -m models/bert-base-uncased \
 # Imports basic libraries
 import argparse
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -30,6 +31,13 @@ from src.utils.get_predictions import get_prdiction
 from src.utils.text_cleaning import text_cleaning
 from src.utils.nlp_metric import Metric
 
+# Set logging
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S",
+    level=logging.INFO,
+)
+logger = logging.getLogger(__name__)
 
 def get_params():
     """Get parameters from command line.
@@ -143,7 +151,9 @@ def evaluate():
     )
 
     # Print metric results
-    print(results)
+    logger.info("Metric results:")
+    for metric, result in results.items():
+        logger.info("%s: %s", metric, result)
 
     # Save metric results
     save_results(results, SAVE_PREDICTIONS_PATH)
@@ -162,14 +172,16 @@ if __name__ == "__main__":
     START_TIME = START_TIME.strftime("%Y-%m-%d_%H-%M-%S")
     SAVE_PREDICTIONS_PATH = Path(params.save_predictions_path) / MODEL_NAME / START_TIME
 
-    print(f"Save predictions path: {SAVE_PREDICTIONS_PATH}")
+    logger.info("Save predictions path: %s", SAVE_PREDICTIONS_PATH)
 
     # Load model and tokenizer
     model, tokenizer = get_model_and_tokenizer(str(MODEL_PATH), NUM_LABELS)
 
-    # Load metric
-    print(f"Metrices: {params.metrics}")
+    # Load metrics
     metrics = [Metric(metric) for metric in params.metrics]
+    logger.info("Metrics: %s", metrics)
 
     # Evaluate the model
     evaluate()
+
+    logger.info("End of the evaluation.")
