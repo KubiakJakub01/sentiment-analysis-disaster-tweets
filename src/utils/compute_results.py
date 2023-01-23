@@ -4,6 +4,7 @@ Compute results based on the predictions and labels.
 # Imports basic libraries
 import argparse
 import json
+import logging
 from pathlib import Path
 
 import pandas as pd
@@ -11,6 +12,13 @@ import pandas as pd
 # Import modules
 from src.utils.nlp_metric import Metric
 
+# Set logging
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S",
+    level=logging.INFO,
+)
+logger = logging.getLogger(__name__)
 
 def get_params():
     """Get the parameters from command line.
@@ -109,28 +117,24 @@ if __name__ == "__main__":
     # Get parameters
     params = get_params()
 
-    print(f"Path to predictions: {params.path_to_predictions}")
+    logger.info("Path to predictions: %s", params.path_to_predictions)
     # Load predictions
     preds = read_predictions(Path(params.path_to_predictions))
 
-    print(f"Path to labels: {params.path_to_labels}")
+    logger.info("Path to labels: %s", params.path_to_labels)
     # Load labels
     labels = read_labels(Path(params.path_to_labels))
 
-    print(f"Labels: {labels[0]}")
-    print(f"Predictions: {preds[0]}")
-
-    print(f"Metrices: {params.metrics}")
     # Load metrics
     metrics = [Metric(metric) for metric in params.metrics]
 
-    print("Computing results...")
+    logger.info("Compute results...")
     # Compute metrics
     results = get_results(preds, labels, metrics)
 
     # Print metric results
-    print(results)
+    logger.info("Results: %s", results)
 
-    print(f"Path to save results: {params.path_to_save_results}")
+    logger.info("Path to save results: %s", params.path_to_save_results)
     # Save metric results
     save_results(results, Path(params.path_to_save_results))
