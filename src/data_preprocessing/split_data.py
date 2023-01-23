@@ -78,8 +78,8 @@ def split_data(data_path: str, train_size: int = 0.8, random_state: int = 42) ->
     # Data base dir
     data_base_dir = Path(data_path).parent
     # Save the train and test sets
-    train.to_csv(f"{data_base_dir}/train.csv", index=False)
-    valid.to_csv(f"{data_base_dir}/valid.csv", index=False)
+    train.to_csv(f"{data_base_dir}/{params.train_name}", index=False)
+    valid.to_csv(f"{data_base_dir}/{params.valid_name}", index=False)
 
     print(f"DONE: Train and valid sets saved to {data_base_dir}.")
 
