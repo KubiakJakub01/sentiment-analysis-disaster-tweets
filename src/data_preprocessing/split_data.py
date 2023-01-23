@@ -16,6 +16,18 @@ def parse_args():
         "--data_path", type=str, default="data/data.csv", help="Path to the data file."
     )
     parser.add_argument(
+        "--train_name",
+        type=str,
+        default="train.csv",
+        help="Name of the train file.",
+    )
+    parser.add_argument(
+        "--valid_name",
+        type=str,
+        default="valid.csv",
+        help="Name of the valid file.",
+    )
+    parser.add_argument(
         "--train_size",
         type=float,
         default=0.9,
